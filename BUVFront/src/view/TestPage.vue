@@ -1,14 +1,19 @@
 <template>
     <div class="main-page" style="height: 100vh; width: 100%">
         <div style="height: 100%; width: 100%; background-color: #fdf4f1">
-            <main-view
-                    v-if="data"
+            <el-row style="height: 100%">
+                <el-col :span="3" style="height: 100%; background-color: coral" >
 
-                    style="height: 100%; width: 100%"
-                       :records='data'
-            ></main-view>
-
-
+                    <div>{{appID}}</div>
+                    <el-button size="mini" @click="submit">submit</el-button>
+                </el-col>
+                <el-col :span="21" style="height: 100%; ; background-color: darkseagreen">
+                    <main-view
+                            style="width: 100%; height: 100%"
+                            :allData='data'
+                    ></main-view>
+                </el-col>
+            </el-row>
         </div>
         <TestComponent
                 v-if="false"
@@ -38,17 +43,21 @@ export default {
         }
     },
     mounted(){
-        this.$store.dispatch('test/fetchData');
+
     },
     computed: {
         ...mapState('test', {
             data: state => state.data,
             counter: state => state.counter,
+            appID: state => state.appID
         }),
     },
-    watch:{
-
-    }
+    methods:{
+        submit(){
+            this.$store.dispatch('test/fetchDataByApp', {'appID':this.appID});
+        }
+    },
+    watch:{}
 }
 </script>
 
