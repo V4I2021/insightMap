@@ -42,3 +42,14 @@ export function generateProjectionByApp(param, callback) {
       console.log(errResponse)
     })
 }
+
+
+export function generateSubProjectionByApp(param, callback) {
+  const url=`${TEST_URL_PREFIX}/generateSubProjectionByApp/`;
+  axios.post(url, param)
+    .then(response =>{
+      callback(response.data)
+    }, errResponse => {
+      console.log(errResponse)
+    })
+}

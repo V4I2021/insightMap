@@ -1,7 +1,7 @@
 <template>
-    <circle r="5" fill="red"
+    <circle r="5" fill="blue"
             :cx="xScale(loc[0])"
-            :cy="xScale(loc[1])"
+            :cy="yScale(loc[1])"
             stroke="white"
     ></circle>
 </template>
@@ -11,7 +11,7 @@ export default {
     name: "Dot",
     props:['xScale', 'yScale', 'loc', 'data'],
     mounted(){
-        console.log('data ', this.data)
+
     }
 }
 </script>

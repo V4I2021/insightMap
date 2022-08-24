@@ -1,7 +1,6 @@
 <template>
     <g :transform="transform">
-        <circle rx="0" ry="0" r="3" fill="red">
-        </circle>
+        <circle rx="0" ry="0" r="3" fill="red"></circle>
         <rect :width="width" :height="height" fill="pink" stroke="white" stroke-width="1"></rect>
 
         <g>
@@ -28,19 +27,19 @@ export default {
             xRange: [0, 0],
             yRange: [0, 0],
             wholeWidth: this.width,
-            wholeHeight: this.height
+            wholeHeight: this.height,
+            boundary: 20
         }
     },
     mounted(){
-        console.log('----- :', this.x, this.y, this.width, this.height, this.viewID)
-        console.log('rrrrr', this.viewID, this.subData)
+
     },
     computed: {
         xScale(){
-            return d3.scaleLinear().domain(this.xRange).range([0, this.wholeWidth])
+            return d3.scaleLinear().domain(this.xRange).range([this.boundary, this.wholeWidth-this.boundary])
         },
         yScale(){
-            return d3.scaleLinear().domain(this.yRange).range([0, this.wholeHeight])
+            return d3.scaleLinear().domain(this.yRange).range([this.boundary, this.wholeHeight-this.boundary])
         },
         transform(){
             return 'translate(' + [this.x, this.y] + ')'
@@ -49,14 +48,16 @@ export default {
             return this.allData[this.viewID]
         },
         updateCount(){
+
             return this.allData[this.viewID]['count']
         }
     },
     watch:{
-        updateCount(count){
-            console.log('count', this.viewID, count)
+        updateCount(){
             this.xRange = d3.extent(this.subData.loc, d=>d[0])
             this.yRange = d3.extent(this.subData.loc, d=>d[1])
+            console.log('domain  ', this.viewID, this.xRange, this.yRange, this.subData)
+            console.log('range  ',this.xScale.range(), this.yScale.range() )
         }
     }
 }

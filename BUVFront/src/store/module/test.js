@@ -10,7 +10,13 @@ const state = () => ({
     B: {data: [], loc:[], count: 0},
     C: {data: [], loc:[], count: 0},
     D: {data: [], loc:[], count: 0}
-  }
+  },
+  subspaceColumns:[],
+  measureValues: [],
+  fullProjection: [],
+  insightTypes: [],
+  breakdownCount: [],
+  subspaceStatistics: []
 })
 
 // getters
@@ -34,19 +40,40 @@ const actions = {
     dataService.fetchDataByApp(payload, resp => {
       commit('updateFullData', resp)
       let l = []
-      for(let i = 0, ilen = resp.length; i< ilen; i++){
+      for(let i = 0, ilen = resp.data.length; i< ilen; i++){
         l.push(i)
       }
-      commit('setSubViewData', {subViewId: 'A', indexList: l})
+      commit('setSubViewData', {subViewId: 'A', indexList: l, calc: resp['projection']})
     })
+  },
+  updateSubViewData({commit}, payload) {
+    let l = payload['indexList']
+    let subViewId = payload['subviewID']
+    commit('setSubViewData', {subViewId: subViewId, indexList: l, calc: true})
+
   },
 }
 
 // mutations
 const mutations = {
   updateFullData(state, fullData){
-    state.data.full = fullData
-    console.log('state', state, fullData)
+    state.data.full = fullData.data
+    state.subspaceColumns = fullData.subspace_columns
+    state.measureValues= fullData.measure_values
+    state.fullPorjection= fullData.projection
+    state.insightTypes = fullData.insight_types
+    state.breakdownCount = fullData.breakdown_count
+    let statistics = []
+    for(let feature in fullData['subspace_statistics']){
+      statistics.push({
+        feature: feature,
+        values: fullData['subspace_statistics'][feature]
+      })
+    }
+
+    state.subspaceStatistics = statistics
+    console.log('statistics ', state.subspaceStatistics)
+    console.log('full', fullData)
   },
   changeCounter(state, newCounter) {
     state.counter = newCounter;
@@ -61,7 +88,7 @@ const mutations = {
     state.data = data
   },
   setSubViewData(state, para){
-
+    console.log("Para ", para)
     let newList = []
     let indexList = para['indexList']
     let subViewId = para['subViewId']
@@ -70,11 +97,16 @@ const mutations = {
     })
     state.data[subViewId]['data'] = []
     state.data[subViewId]['data'] = newList
-
-    dataService.generateProjectionByApp({appID: state.appID, indexList: indexList}, function(resp){
-      state.data[subViewId]['loc'] = resp
+    if(para.calc === true){
+      dataService.generateProjectionByApp({appID: state.appID, indexList: indexList}, function(resp){
+        state.data[subViewId]['loc'] = resp
+        state.data[subViewId].count +=1
+      })
+    }else{
+      state.data[subViewId]['loc'] = para.calc
       state.data[subViewId].count +=1
-    })
+    }
+
   }
 }
 

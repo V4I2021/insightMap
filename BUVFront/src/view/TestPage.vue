@@ -3,9 +3,44 @@
         <div style="height: 100%; width: 100%; background-color: #fdf4f1">
             <el-row style="height: 100%">
                 <el-col :span="3" style="height: 100%; background-color: coral" >
+                    <el-row>
+                        <div>App ID: {{appID}}</div>
+                        <el-button size="mini" @click="submit">submit</el-button>
+                    </el-row>
+                    <el-divider></el-divider>
+                    <el-row>
+                        <div>Select breakdown: </div>
+                        <el-select v-model="selectBreakdown" multiple placeholder="Select Measure">
+                            <el-option
+                                    v-for="item in breakdownCount"
+                                    :key="item.breakdown"
+                                    :label="item.breakdown"
+                                    :value="item.breakdown">
 
-                    <div>{{appID}}</div>
-                    <el-button size="mini" @click="submit">submit</el-button>
+                                <span style="float: left">{{ item.breakdown }}</span>
+                                <span style="float: right; color: #8492a6; font-size: 2px">{{ item.index }}</span>
+                            </el-option>
+                        </el-select>
+                        <el-button size="mini" @click="submitBreakdown">submit</el-button>
+                    </el-row>
+                    <el-divider></el-divider>
+                    <el-row>
+                        <div>Select subspace: </div>
+                        <!--TODO: here-->
+
+                        <el-select v-for="(subspaceFeature, i) in subspaceStatistics" :key=i
+                                   v-model="subspaceFeatureMap[subspaceFeature.feature]" multiple :placeholder="subspaceFeature.feature">
+                            <el-option
+                                    v-for="item in subspaceFeature.values"
+                                    :key="item"
+                                    :label="item"
+                                    :value="item">
+                                <span style="float: left">{{ item}}</span>
+                            </el-option>
+
+                        </el-select>
+                        <el-button size="mini" @click="submitSubspace">submit subspace</el-button>
+                    </el-row>
                 </el-col>
                 <el-col :span="21" style="height: 100%; ; background-color: darkseagreen">
                     <main-view
@@ -39,7 +74,14 @@ export default {
     data(){
         return {
             nodes: [],
-            links: []
+            links: [],
+            selectInsightTypes: [],
+            selectBreakdown: [],
+            subspaceFeatureMap: {},
+
+
+            bIndexList: [],
+            cIndexList: []
         }
     },
     mounted(){
@@ -49,15 +91,104 @@ export default {
         ...mapState('test', {
             data: state => state.data,
             counter: state => state.counter,
-            appID: state => state.appID
-        }),
+            appID: state => state.appID,
+            measureValues: state => state.measureValues,
+            insightTypes: state => state.insightTypes,
+            breakdownCount: state => state.breakdownCount,
+            subspaceStatistics: state => state.subspaceStatistics
+        })
     },
     methods:{
         submit(){
             this.$store.dispatch('test/fetchDataByApp', {'appID':this.appID});
-        }
+        },
+        submitInsightTypes(){
+
+        },
+        updateAllViews(){
+
+            let d = this.cIndexList.filter(value => this.bIndexList.includes(value));
+            let c = this.cIndexList.filter(value => !d.includes(value));
+            let b = this.bIndexList.filter(value => !d.includes(value));
+
+            this.$store.dispatch('test/updateSubViewData', {
+                'appID': this.appID,
+                'subviewID': 'B',
+                'indexList': b
+            })
+
+            this.$store.dispatch('test/updateSubViewData', {
+                'appID': this.appID,
+                'subviewID': 'C',
+                'indexList': c
+            })
+
+            this.$store.dispatch('test/updateSubViewData', {
+                'appID': this.appID,
+                'subviewID': 'D',
+                'indexList': d
+            })
+        },
+        submitBreakdown(){
+
+            let indexList = []
+            let breakdownMap  = {}
+            this.selectBreakdown.forEach(breakdown=>{
+                breakdownMap[breakdown] = true
+            })
+
+            this.data.full.forEach((d)=>{
+                if(breakdownMap[d.breakdown]){
+                    indexList.push(d.index)
+                }
+            })
+            this.cIndexList = indexList
+
+            this.updateAllViews()
+
+        },
+        submitSubspace(){
+            console.log('subspaces', this.subspaceFeatureMap)
+            let hSubspaceMap = {}
+            for(let subspaceFeature in this.subspaceFeatureMap){
+                if(this.subspaceFeatureMap[subspaceFeature].length!=0){
+                    if(hSubspaceMap[subspaceFeature] == undefined){
+                        hSubspaceMap[subspaceFeature] = {}
+                    }
+                    this.subspaceFeatureMap[subspaceFeature].forEach(d=>{
+                        hSubspaceMap[subspaceFeature][d] = true
+                    })
+                }
+            }
+            let selectList =  []
+            this.data.full.forEach((d)=>{
+                let selectSign = true;
+                for(let feature in hSubspaceMap){
+                    if(hSubspaceMap[feature][d[feature]] != true){
+                        selectSign = false
+                    }
+                }
+                if(selectSign == true){
+                    selectList.push(d.index)
+                }
+            })
+
+            this.bIndexList=selectList
+
+            this.updateAllViews()
+        },
+
     },
-    watch:{}
+    watch:{
+        subspaceStatistics(newVal){
+            console.log('new Feature subspace', newVal)
+            // 为什么不能初始化？
+            // newVal.forEach(subspaceFeature=>{
+            //     this.subspaceFeatureMap[subspaceFeature.feature] = []
+            // })
+        }
+
+    }
 }
 </script>
 

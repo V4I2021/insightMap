@@ -25,7 +25,7 @@
             <sub-view
                     class="D"
                     :x="px" :y="py"
-                    :width="px" :height="py"
+                    :width="width - px" :height="height - py"
                     :viewID="'D'"
                     :allData="allData"
             ></sub-view>
