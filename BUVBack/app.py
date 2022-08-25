@@ -5,7 +5,9 @@ import os
 
 import pandas as pd
 import numpy as np
+
 from sklearn.manifold import TSNE
+from sklearn.manifold import spectral_embedding
 
 import time
 
@@ -88,6 +90,8 @@ def read_all_insight():
 
     projection_path = '{}/data/{}/projection.npz'.format(FILE_ABS_PATH, app_id)
     all_projection = np.load(projection_path)['projection']
+    simFile = '{}/data/{}/similarity.npz'.format(FILE_ABS_PATH, app_id)
+    matrix = np.load(simFile)['sim']
     return json.dumps({
         'data': result_df.to_dict('records'),
         'subspace_columns': subspace_columns,
@@ -95,7 +99,8 @@ def read_all_insight():
         'projection': all_projection.tolist(),
         'insight_types': insight_types,
         'breakdown_count': breakdown_count,
-        'subspace_statistics': subspace_statistics
+        'subspace_statistics': subspace_statistics,
+        'sim_matrix': matrix.tolist()
     })
 
 def generate_projection(sim_matrix, perplexity = 12):
@@ -106,6 +111,8 @@ def generate_projection(sim_matrix, perplexity = 12):
         return np.array([[0,0]])
     X_embedded = TSNE(n_components=2,
                    init='random', perplexity=perplexity).fit_transform(sim_matrix)
+
+    # X_embedded = spectral_embedding(sim_matrix, n_components=2)
     print('Projection use time', time.time() - st)
     return X_embedded
 
@@ -122,7 +129,7 @@ def return_projection():
     params = request.json
     app_id = params['appID']
     index_list = params['indexList']
-    embedded = calc_projection(None, index_list, app_id, 50)
+    embedded = calc_projection(None, index_list, app_id, 12)
     return json.dumps(embedded.tolist())
 
 

@@ -1,5 +1,5 @@
 import {dataService} from '@/service';
-
+// import * as d3 from 'd3'
 // initial state
 const state = () => ({
   counter: 0,
@@ -16,7 +16,13 @@ const state = () => ({
   fullProjection: [],
   insightTypes: [],
   breakdownCount: [],
-  subspaceStatistics: []
+  subspaceStatistics: [],
+  simMatrix:[],
+  topK: 15,
+  topIndexList: [],
+  selectLinks: [], //[src_index, dst_index]
+  index2View: {},
+  index2Loc: {},
 })
 
 // getters
@@ -35,14 +41,15 @@ const actions = {
       commit('updateData', resp)
     })
   },
-  fetchDataByApp({commit}, payload) {
-
+  fetchDataByApp({state, commit}, payload) {
     dataService.fetchDataByApp(payload, resp => {
       commit('updateFullData', resp)
       let l = []
       for(let i = 0, ilen = resp.data.length; i< ilen; i++){
         l.push(i)
+        state.index2View[i] = 'A'
       }
+
       commit('setSubViewData', {subViewId: 'A', indexList: l, calc: resp['projection']})
     })
   },
@@ -50,7 +57,6 @@ const actions = {
     let l = payload['indexList']
     let subViewId = payload['subviewID']
     commit('setSubViewData', {subViewId: subViewId, indexList: l, calc: true})
-
   },
 }
 
@@ -63,6 +69,13 @@ const mutations = {
     state.fullPorjection= fullData.projection
     state.insightTypes = fullData.insight_types
     state.breakdownCount = fullData.breakdown_count
+    state.simMatrix = fullData.sim_matrix
+    state.simMatrix.forEach((scores)=>{
+      let scorePackets = Array.from(scores, (e, i)=>[e, i])
+      let _scoreObjs = scorePackets.sort((a, b) => b[0]-a[0])
+
+      state.topIndexList.push(_scoreObjs.splice(0, state.topK))
+    })
     let statistics = []
     for(let feature in fullData['subspace_statistics']){
       statistics.push({
@@ -72,8 +85,8 @@ const mutations = {
     }
 
     state.subspaceStatistics = statistics
-    console.log('statistics ', state.subspaceStatistics)
-    console.log('full', fullData)
+    // console.log('statistics ', state.subspaceStatistics)
+    // console.log('full', fullData)
   },
   changeCounter(state, newCounter) {
     state.counter = newCounter;
@@ -100,11 +113,26 @@ const mutations = {
     if(para.calc === true){
       dataService.generateProjectionByApp({appID: state.appID, indexList: indexList}, function(resp){
         state.data[subViewId]['loc'] = resp
+        resp.forEach((d,i)=>{
+          state.index2Loc[indexList[i]] = d
+        })
+
         state.data[subViewId].count +=1
       })
     }else{
       state.data[subViewId]['loc'] = para.calc
+      para.calc.forEach((d,i)=>{
+        state.index2Loc[indexList[i]] = d
+      })
       state.data[subViewId].count +=1
+    }
+
+  },
+  selectDot(state, para){
+    if(para){
+      state.selectLinks = Array.from(state.topIndexList[para], d=>[para, d[1]])
+    }else{
+      state.selectLinks = []
     }
 
   }

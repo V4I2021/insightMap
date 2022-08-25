@@ -1,8 +1,8 @@
 <template>
-    <div class="main-page" style="height: 100vh; width: 100%">
-        <div style="height: 100%; width: 100%; background-color: #fdf4f1">
+    <div class="main-page" style="height: 95vh; width: 100%">
+        <div style="height:100%; width: 100%;">
             <el-row style="height: 100%">
-                <el-col :span="3" style="height: 100%; background-color: coral" >
+                <el-col :span="3" style="height: 100%;" >
                     <el-row>
                         <div>App ID: {{appID}}</div>
                         <el-button size="mini" @click="submit">submit</el-button>
@@ -10,13 +10,14 @@
                     <el-divider></el-divider>
                     <el-row>
                         <div>Select breakdown: </div>
-                        <el-select v-model="selectBreakdown" multiple placeholder="Select Measure">
-                            <el-option
-                                    v-for="item in breakdownCount"
-                                    :key="item.breakdown"
-                                    :label="item.breakdown"
-                                    :value="item.breakdown">
-
+                        <el-select size="mini" v-model="selectBreakdown" multiple
+                                   style="margin-top: 10px"
+                                   placeholder="Select Measure">
+                            <el-option size="mini"
+                                       v-for="item in breakdownCount"
+                                       :key="item.breakdown"
+                                       :label="item.breakdown"
+                                       :value="item.breakdown">
                                 <span style="float: left">{{ item.breakdown }}</span>
                                 <span style="float: right; color: #8492a6; font-size: 2px">{{ item.index }}</span>
                             </el-option>
@@ -27,14 +28,15 @@
                     <el-row>
                         <div>Select subspace: </div>
                         <!--TODO: here-->
-
-                        <el-select v-for="(subspaceFeature, i) in subspaceStatistics" :key=i
-                                   v-model="subspaceFeatureMap[subspaceFeature.feature]" multiple :placeholder="subspaceFeature.feature">
-                            <el-option
-                                    v-for="item in subspaceFeature.values"
-                                    :key="item"
-                                    :label="item"
-                                    :value="item">
+                        <el-select
+                                style="margin-top: 10px"
+                                size="mini" v-for="(subspaceFeature, i) in subspaceStatistics" :key=i
+                                v-model="subspaceFeatureMap[subspaceFeature.feature]" multiple :placeholder="subspaceFeature.feature">
+                            <el-option size="mini"
+                                       v-for="item in subspaceFeature.values"
+                                       :key="item"
+                                       :label="item"
+                                       :value="item">
                                 <span style="float: left">{{ item}}</span>
                             </el-option>
 
@@ -42,10 +44,12 @@
                         <el-button size="mini" @click="submitSubspace">submit subspace</el-button>
                     </el-row>
                 </el-col>
-                <el-col :span="21" style="height: 100%; ; background-color: darkseagreen">
+                <el-col :span="21" style="height: 100%;">
                     <main-view
                             style="width: 100%; height: 100%"
                             :allData='data'
+                            :symboScale="symboScale"
+                            :insightTypes="insightTypes"
                     ></main-view>
                 </el-col>
             </el-row>
@@ -62,8 +66,8 @@
 <script>
 import TestComponent from "@/components/test-page/TestComponent";
 import {mapState} from "vuex";
-// import * as d3 from "d3";
 import MainView from "@/components/visualization/MainView";
+import * as d3 from "d3";
 
 export default {
     name: 'TestPage',
@@ -72,6 +76,14 @@ export default {
         TestComponent,
     },
     data(){
+        let names = ['symbolCircle', 'symbolDiamond', 'symbolCross', 'symbolDiamond', 'symbolSquare', 'symbolStar', 'symbolTriangle', 'symbolWye'];
+        let symbos = []
+        names.forEach(name=>{
+            let sym = d3.symbol()
+                .size(function() { return 120 } )
+                .type(function() { return d3[name] })()
+            symbos.push(sym)
+        })
         return {
             nodes: [],
             links: [],
@@ -79,9 +91,12 @@ export default {
             selectBreakdown: [],
             subspaceFeatureMap: {},
 
-
+            aIndexList: [],
             bIndexList: [],
-            cIndexList: []
+            cIndexList: [],
+
+            symbos: symbos,
+            symboScale: d3.scaleOrdinal().range(symbos)
         }
     },
     mounted(){
@@ -95,21 +110,43 @@ export default {
             measureValues: state => state.measureValues,
             insightTypes: state => state.insightTypes,
             breakdownCount: state => state.breakdownCount,
-            subspaceStatistics: state => state.subspaceStatistics
-        })
+            subspaceStatistics: state => state.subspaceStatistics,
+            index2View: state => state.index2View
+
+        }),
     },
     methods:{
         submit(){
             this.$store.dispatch('test/fetchDataByApp', {'appID':this.appID});
         },
-        submitInsightTypes(){
-
-        },
         updateAllViews(){
-
+            let aIndex = []
+            this.data.full.forEach(d=>{
+                aIndex.push(d.index)
+            })
+            let a = aIndex.filter(value => (!this.bIndexList.includes(value)&&(!this.cIndexList.includes(value))));
             let d = this.cIndexList.filter(value => this.bIndexList.includes(value));
             let c = this.cIndexList.filter(value => !d.includes(value));
             let b = this.bIndexList.filter(value => !d.includes(value));
+
+            a.forEach(index=>{
+                this.index2View[index] = 'A'
+            })
+            b.forEach(index=>{
+                this.index2View[index] = 'B'
+            })
+            c.forEach(index=>{
+                this.index2View[index] = 'C'
+            })
+            d.forEach(index=>{
+                this.index2View[index] = 'D'
+            })
+
+            this.$store.dispatch('test/updateSubViewData', {
+                'appID': this.appID,
+                'subviewID': 'A',
+                'indexList': a
+            })
 
             this.$store.dispatch('test/updateSubViewData', {
                 'appID': this.appID,
@@ -186,6 +223,13 @@ export default {
             // newVal.forEach(subspaceFeature=>{
             //     this.subspaceFeatureMap[subspaceFeature.feature] = []
             // })
+        },
+        insightTypes(vals){
+            let features = []
+            vals.forEach(d=>{
+                features.push(d.insight)
+            })
+            this.symboScale.domain(features)
         }
 
     }

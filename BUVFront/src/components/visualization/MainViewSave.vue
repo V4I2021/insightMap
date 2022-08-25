@@ -164,7 +164,6 @@ export default {
 
         let insightMap= {}
         let insightTypes = []
-        console.log('rrrrr')
         this.records.A_results.forEach(d=>{
             let insightType = d.insight
             if(!insightMap[insightType]){
