@@ -109,10 +109,10 @@ def generate_projection(sim_matrix, perplexity = 12):
         return np.array([])
     if sim_matrix.shape[0] == 1:
         return np.array([[0,0]])
-    X_embedded = TSNE(n_components=2,
-                   init='random', perplexity=perplexity).fit_transform(sim_matrix)
+    # X_embedded = TSNE(n_components=2,
+    #                init='random', perplexity=perplexity).fit_transform(sim_matrix)
 
-    # X_embedded = spectral_embedding(sim_matrix, n_components=2)
+    X_embedded = spectral_embedding(sim_matrix, n_components=2)
     print('Projection use time', time.time() - st)
     return X_embedded
 

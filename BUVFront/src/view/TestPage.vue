@@ -27,7 +27,6 @@
                     <el-divider></el-divider>
                     <el-row>
                         <div>Select subspace: </div>
-                        <!--TODO: here-->
                         <el-select
                                 style="margin-top: 10px"
                                 size="mini" v-for="(subspaceFeature, i) in subspaceStatistics" :key=i
@@ -44,13 +43,16 @@
                         <el-button size="mini" @click="submitSubspace">submit subspace</el-button>
                     </el-row>
                 </el-col>
-                <el-col :span="21" style="height: 100%;">
+                <el-col :span="18" style="height: 100%;">
                     <main-view
                             style="width: 100%; height: 100%"
                             :allData='data'
                             :symboScale="symboScale"
                             :insightTypes="insightTypes"
                     ></main-view>
+                </el-col>
+                <el-col :span="3" style="height: 100%;">
+
                 </el-col>
             </el-row>
         </div>

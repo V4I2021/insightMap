@@ -7,19 +7,7 @@
                     <text x="20" y="5" style="font-size: 10px">{{ d.insight}}</text>
                 </g>
             </g>
-            <g class="links">
 
-                <line v-for="(d, i) in renderingLink" :key=i
-                      :x1="d[0].x"
-                      :y1="d[0].y"
-                      :x2="d[1].x"
-                      :y2="d[1].y"
-                      stroke='grey'
-                      stroke-width="1"
-                      stroke-opacity="0.3"
-                >
-                </line>
-            </g>
             <sub-view
                     class="A"
                     :x="0" :y="0"
@@ -60,6 +48,16 @@
                     :xScale="scaleConfig.D.xScale"
                     :yScale="scaleConfig.D.yScale"
             ></sub-view>
+            <g class="links">
+                <path v-for="(d, i) in renderingPath" :key=i
+                      :d="d.path"
+                      :stroke="d.same == false? 'steelblue' : 'orange'"
+                      stroke-width="2"
+                      stroke-opacity="0.3"
+                      stroke-dasharray="3 1"
+                      fill="none">
+                </path>
+            </g>
         </g>
     </svg>
 </template>
@@ -69,6 +67,11 @@
 import SubView from "@/components/visualization/SubView";
 import * as d3 from "d3";
 import {mapState} from "vuex";
+
+let curveGenerator = d3.line()
+    .x((p) => p.x)
+    .y((p) => p.y)
+    .curve(d3.curveBasis);
 
 export default {
     name: "MainView",
@@ -99,8 +102,6 @@ export default {
                     yScale: d3.scaleLinear(),
                 }
             },
-
-
 
             offsetConfig:{
                 "A":[0,0],
@@ -169,21 +170,44 @@ export default {
 
                 let srcScale = this.scaleConfig[srcViewIndex];
                 let dstScale = this.scaleConfig[dstViewIndex];
-                out.push([
-                    {
+
+                let sign = false
+                if(srcViewIndex == dstViewIndex){
+                    sign = true
+                }
+                out.push({
+                    src:{
                         x: srcOffset[0] + srcScale.xScale(this.index2Loc[src_index][0]),
                         y: srcOffset[1] + srcScale.yScale(this.index2Loc[src_index][1])
-                    },{
+                    },
+                    dst:{
                         x: dstOffset[0] + dstScale.xScale(this.index2Loc[dst_index][0]),
                         y: dstOffset[1] + dstScale.yScale(this.index2Loc[dst_index][1])
-                    }
-
-                ])
+                    },
+                    same: sign
+                })
             })
             return out
+        },
+        renderingPath(){
+            let paths = []
+            this.renderingLink.forEach(d=>{
+
+                let arr = [d.src,
+                    {
+                        x:d.src.x + (d.dst.x - d.src.x) * 3 / 4,
+                        y:d.src.y,
+                    },
+                    d.dst]
+
+                paths.push({path: curveGenerator(arr), same: d.same})
+            })
+
+            return paths
         }
     }
 }
+
 </script>
 
 <style scoped>

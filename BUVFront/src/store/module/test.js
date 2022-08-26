@@ -23,6 +23,8 @@ const state = () => ({
   selectLinks: [], //[src_index, dst_index]
   index2View: {},
   index2Loc: {},
+  selectedDots: [],
+  highlightedDots: []
 })
 
 // getters
@@ -74,7 +76,16 @@ const mutations = {
       let scorePackets = Array.from(scores, (e, i)=>[e, i])
       let _scoreObjs = scorePackets.sort((a, b) => b[0]-a[0])
 
-      state.topIndexList.push(_scoreObjs.splice(0, state.topK))
+      let topKScores = _scoreObjs.splice(0, state.topK)
+      let minScore= topKScores[state.topK-1][0]
+      for(let i  = state.topK, ilen = scores.length; i<ilen; i++){
+        if(scores[i][0] == minScore){
+          topKScores.push(scores[i])
+        }else{
+          break
+        }
+      }
+      state.topIndexList.push(topKScores)
     })
     let statistics = []
     for(let feature in fullData['subspace_statistics']){
@@ -85,14 +96,9 @@ const mutations = {
     }
 
     state.subspaceStatistics = statistics
-    // console.log('statistics ', state.subspaceStatistics)
-    // console.log('full', fullData)
-  },
-  changeCounter(state, newCounter) {
-    state.counter = newCounter;
   },
   updateData(state, data){
-    console.log('data', data)
+
     data.A_results.forEach(d=>{
       d.lx = 0;
       d.ly = 0;
@@ -108,18 +114,19 @@ const mutations = {
     indexList.forEach(index=>{
       newList.push(state.data.full[index])
     })
-    state.data[subViewId]['data'] = []
-    state.data[subViewId]['data'] = newList
+
+
     if(para.calc === true){
       dataService.generateProjectionByApp({appID: state.appID, indexList: indexList}, function(resp){
         state.data[subViewId]['loc'] = resp
         resp.forEach((d,i)=>{
           state.index2Loc[indexList[i]] = d
         })
-
+        state.data[subViewId]['data'] = newList
         state.data[subViewId].count +=1
       })
     }else{
+      state.data[subViewId]['data'] = newList
       state.data[subViewId]['loc'] = para.calc
       para.calc.forEach((d,i)=>{
         state.index2Loc[indexList[i]] = d
@@ -130,11 +137,15 @@ const mutations = {
   },
   selectDot(state, para){
     if(para){
+      state.selectedDots = [para]
       state.selectLinks = Array.from(state.topIndexList[para], d=>[para, d[1]])
+      state.highlightedDots = Array.from(state.topIndexList[para], d=>d[1])
     }else{
+      state.selectedDots = []
       state.selectLinks = []
-    }
+      state.highlightedDots = []
 
+    }
   }
 }
 
