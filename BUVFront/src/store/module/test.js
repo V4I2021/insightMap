@@ -144,7 +144,6 @@ const mutations = {
       state.selectedDots = []
       state.selectLinks = []
       state.highlightedDots = []
-
     }
   }
 }

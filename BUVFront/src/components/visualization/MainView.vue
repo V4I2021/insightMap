@@ -144,7 +144,7 @@ export default {
     },
     watch:{
         selectedLinks(){
-            console.log('renderLink', this.renderingLink)
+
         }
     },
     computed:{

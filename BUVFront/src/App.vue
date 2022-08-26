@@ -1,17 +1,17 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+    <div id="app">
+        <router-view/>
+    </div>
 </template>
 
 <script>
-  export default {
+export default {
     name: 'App',
-  }
+}
 </script>
 
 <style>
-  #app {
+#app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -19,5 +19,48 @@
     color: #2c3e50;
     height: 100%;
     width: 100%;
-  }
+}
+
+
+.mini_head{
+    background: rgb(236, 233, 233);
+    width: 100%;
+    height: 20px;
+}
+.mini_title{
+    font-family: 'monospace';
+    height: 20px;
+    font-size: 13px;
+    padding-left: 3px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.mini_title_center{
+    background: rgb(232, 228, 228);
+    font-family: 'monospace';
+    height: 20px;
+    font-size: 13px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center
+}
+
+
+.boundary{
+    border-style: dashed;
+    border-color: #d3dce6;
+    border-width: 1px;
+}
+
+.el-table .warning-row {
+    background: #a6cee3;
+}
+.boundary {
+    /*border-style: dashed;*/
+    border-style: solid;
+    border-color: #d3dce6;
+    border-width: 0.5px;
+    border-radius: 3px;
+}
 </style>

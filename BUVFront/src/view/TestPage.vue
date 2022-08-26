@@ -1,15 +1,24 @@
 <template>
     <div class="main-page" style="height: 95vh; width: 100%">
-        <div style="height:100%; width: 100%;">
-            <el-row style="height: 100%">
+        <div style="height:100%; width: 100%; text-align: left">
+            <el-row style="height: 100%" class="boundary">
                 <el-col :span="3" style="height: 100%;" >
                     <el-row>
-                        <div>App ID: {{appID}}</div>
+                        <div class="mini_head">
+                            <div class="mini_title">Select data</div>
+                        </div>
+                        <el-descriptions size="mini" class="margin-top" :column="1" >
+                            <el-descriptions-item label="Data name">
+                                {{appID}}
+                            </el-descriptions-item>
+                        </el-descriptions>
                         <el-button size="mini" @click="submit">submit</el-button>
                     </el-row>
-                    <el-divider></el-divider>
-                    <el-row>
-                        <div>Select breakdown: </div>
+
+                    <el-row style="margin-top:10px">
+                        <div class="mini_head">
+                            <div class="mini_title">Select breakdown: </div>
+                        </div>
                         <el-select size="mini" v-model="selectBreakdown" multiple
                                    style="margin-top: 10px"
                                    placeholder="Select Measure">
@@ -22,11 +31,13 @@
                                 <span style="float: right; color: #8492a6; font-size: 2px">{{ item.index }}</span>
                             </el-option>
                         </el-select>
-                        <el-button size="mini" @click="submitBreakdown">submit</el-button>
+                        <el-button size="mini" @click="submitBreakdown" style="margin-top: 5px">submit</el-button>
                     </el-row>
-                    <el-divider></el-divider>
-                    <el-row>
-                        <div>Select subspace: </div>
+
+                    <el-row style="margin-top:10px">
+                        <div class="mini_head">
+                            <div class="mini_title">Select subspace:</div>
+                        </div>
                         <el-select
                                 style="margin-top: 10px"
                                 size="mini" v-for="(subspaceFeature, i) in subspaceStatistics" :key=i
@@ -40,19 +51,25 @@
                             </el-option>
 
                         </el-select>
-                        <el-button size="mini" @click="submitSubspace">submit subspace</el-button>
+                        <el-button style="margin-top: 5px" size="mini" @click="submitSubspace">submit subspace</el-button>
                     </el-row>
                 </el-col>
-                <el-col :span="18" style="height: 100%;">
+                <el-col :span="15" style="height: 100%;" class="boundary">
+                    <div class="mini_head">
+                        <div class="mini_title">Projection View:</div>
+                    </div>
                     <main-view
-                            style="width: 100%; height: 100%"
+                            style="width: 100%; height: calc(100% - 20px)"
                             :allData='data'
                             :symboScale="symboScale"
                             :insightTypes="insightTypes"
                     ></main-view>
                 </el-col>
-                <el-col :span="3" style="height: 100%;">
-
+                <el-col :span="6" style="height: 100%;" class="boundary">
+                    <div class="mini_head">
+                        <div class="mini_title">Information View:</div>
+                        <Information></Information>
+                    </div>
                 </el-col>
             </el-row>
         </div>
@@ -70,10 +87,12 @@ import TestComponent from "@/components/test-page/TestComponent";
 import {mapState} from "vuex";
 import MainView from "@/components/visualization/MainView";
 import * as d3 from "d3";
+import Information from "@/components/visualization/Information";
 
 export default {
     name: 'TestPage',
     components: {
+        Information,
         MainView,
         TestComponent,
     },
@@ -187,7 +206,7 @@ export default {
 
         },
         submitSubspace(){
-            console.log('subspaces', this.subspaceFeatureMap)
+
             let hSubspaceMap = {}
             for(let subspaceFeature in this.subspaceFeatureMap){
                 if(this.subspaceFeatureMap[subspaceFeature].length!=0){
@@ -219,8 +238,8 @@ export default {
 
     },
     watch:{
-        subspaceStatistics(newVal){
-            console.log('new Feature subspace', newVal)
+        subspaceStatistics(){
+
             // 为什么不能初始化？
             // newVal.forEach(subspaceFeature=>{
             //     this.subspaceFeatureMap[subspaceFeature.feature] = []
