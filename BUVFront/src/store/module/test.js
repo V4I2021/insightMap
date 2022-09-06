@@ -18,7 +18,7 @@ const state = () => ({
   breakdownCount: [],
   subspaceStatistics: [],
   simMatrix:[],
-  topK: 15,
+  topK: 5,
   topIndexList: [],
   selectLinks: [], //[src_index, dst_index]
   index2View: {},
@@ -52,7 +52,8 @@ const actions = {
         state.index2View[i] = 'A'
       }
 
-      commit('setSubViewData', {subViewId: 'A', indexList: l, calc: resp['projection']})
+      // commit('setSubViewData', {subViewId: 'A', indexList: l, calc: resp['projection']})
+      commit('setSubViewData', {subViewId: 'A', indexList: l, calc: true})
     })
   },
   updateSubViewData({commit}, payload) {

@@ -101,7 +101,7 @@ export default {
         let symbos = []
         names.forEach(name=>{
             let sym = d3.symbol()
-                .size(function() { return 120 } )
+                .size(function() { return 40 } )
                 .type(function() { return d3[name] })()
             symbos.push(sym)
         })

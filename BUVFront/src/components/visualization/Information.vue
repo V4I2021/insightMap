@@ -34,7 +34,6 @@ export default {
     },
     watch:{
         selectedDots(){
-            console.log('update val', this.displayInsights)
         }
     }
 }

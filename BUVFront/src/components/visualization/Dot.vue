@@ -3,7 +3,14 @@
         <path  :d="symboScale(data.insight)"
                @mouseover="mouseover"
                @mouseout="mouseout"
-               fill="white" fill-opacity="0.5" :stroke="stroke" :stroke-width="strokeWidth"></path>
+               fill="yellow" fill-opacity="0.5" :stroke="stroke" :stroke-width="strokeWidth"></path>
+
+<!--        <circle-->
+<!--                r="5"-->
+<!--                @mouseover="mouseover"-->
+<!--                @mouseout="mouseout"-->
+<!--                fill="steelblue" fill-opacity="0.5" :stroke="stroke" :stroke-width="strokeWidth"-->
+<!--        ></circle>-->
     </g>
 </template>
 
@@ -15,13 +22,15 @@ export default {
     name: "Dot",
     props:['xScale', 'yScale', 'loc', 'data', 'symboScale'],
     data(){
-        return {}
+        return {
+
+        }
     },
     mounted(){
     },
     computed:{
         transform(){
-            return "translate(" + [this.xScale(this.loc[0]), this.yScale(this.loc[1])] + ")"
+            return "translate(" + [this.xScale(this.loc.x), this.yScale(this.loc.y)] + ")"
         },
         path(){
             return d3.symbol()
