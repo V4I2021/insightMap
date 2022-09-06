@@ -1,0 +1,13 @@
+breakdown,breakdown_value,measure,sig,impact,insight,insight_type,score,iid,sid,name,year,team_name,age,lg_name,pos_name,index,x,y
+name,Kobe Bryant,PTS,1.0,0.0384780429999999,Top1,Point,0.0384780429999999,57,182479,*,*,Los Angeles Lakers,*,NBA,*,564,176.90103,45.045204
+year,1955,PTS,1.0,0.0384780429999999,Change Point,Shape,0.0384780429999999,121,182479,*,*,Los Angeles Lakers,*,NBA,*,565,39.223125,270.00922
+year,1972,PTS,0.922463153,0.0384780429999999,Outlier,Shape,0.035494577,152,182479,*,*,Los Angeles Lakers,*,NBA,*,566,-176.3648,215.7157
+year,1961,AST,1.0,0.0384780429999999,Change Point,Shape,0.0384780429999999,421,182479,*,*,Los Angeles Lakers,*,NBA,*,567,40.381786,-257.33557
+year,1985,AST,0.976634434,0.0384780429999999,Outlier,Shape,0.037578982,456,182479,*,*,Los Angeles Lakers,*,NBA,*,568,-137.96428,-201.29942
+name,Kobe Bryant,PTS,1.0,0.039097888,Top1,Point,0.039097888,74,25260,*,*,Los Angeles Lakers,*,*,*,615,-22.93106,-146.5576
+year,1955,PTS,1.0,0.039097888,Change Point,Shape,0.039097888,108,25260,*,*,Los Angeles Lakers,*,*,*,616,213.47562,-145.49414
+year,1972,PTS,0.920686803,0.039097888,Outlier,Shape,0.035996909,154,25260,*,*,Los Angeles Lakers,*,*,*,617,-187.90074,-13.009225
+lg_name,NBA,PTS,0.949080472,0.039097888,Attribution,Point,0.037107042,221,25260,*,*,Los Angeles Lakers,*,*,*,618,-78.40885,-320.01276
+year,1961,AST,1.0,0.039097888,Change Point,Shape,0.039097888,408,25260,*,*,Los Angeles Lakers,*,*,*,619,65.54215,60.274822
+year,1985,AST,0.976148515,0.039097888,Outlier,Shape,0.038165345,470,25260,*,*,Los Angeles Lakers,*,*,*,620,250.16832,133.45078
+lg_name,NBA,AST,0.949108562,0.039097888,Attribution,Point,0.03710814,520,25260,*,*,Los Angeles Lakers,*,*,*,621,-70.33649,237.70207

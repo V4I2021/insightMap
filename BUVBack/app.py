@@ -103,20 +103,32 @@ def read_all_insight():
         'sim_matrix': matrix.tolist()
     })
 
-def generate_projection(sim_matrix, perplexity = 12):
+def generate_projection(sim_matrix, perplexity):
     st = time.time()
     if sim_matrix.shape[0] == 0:
         return np.array([])
     if sim_matrix.shape[0] == 1:
         return np.array([[0,0]])
-    # X_embedded = TSNE(n_components=2,
-    #                init='random', perplexity=perplexity).fit_transform(sim_matrix)
+    # Plan 1
+    X_embedded = TSNE(n_components=2,
+                   init='random', perplexity=perplexity).fit_transform(sim_matrix)
 
-    X_embedded = spectral_embedding(sim_matrix, n_components=2)
+    # Plan 2
+    # X_embedded = spectral_embedding(sim_matrix,
+    #                                 eigen_solver="lobpcg",
+    #                                 norm_laplacian=True,
+    #                                 n_components=2)
+
+    # Plan 3
+    # grah_embedding = spectral_embedding(sim_matrix, n_components=12)
+
+    # X_embedded = TSNE(n_components=2,
+    #                init='random', perplexity=perplexity).fit_transform(grah_embedding)
+
     print('Projection use time', time.time() - st)
     return X_embedded
 
-def calc_projection(sim, index_list, app_id, perplexity = 50):
+def calc_projection(sim, index_list, app_id, perplexity):
     simFile = '{}/data/{}/similarity.npz'.format(FILE_ABS_PATH, app_id)
     matrix = np.load(simFile) if (type(sim) == str or sim is None) else sim
     matrix = matrix['sim']

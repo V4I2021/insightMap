@@ -1,0 +1,3 @@
+breakdown,breakdown_value,measure,sig,impact,insight,insight_type,score,iid,sid,name,year,team_name,age,lg_name,pos_name,index,x,y
+lg_name,NBA,PTS,0.949080472,0.039097888,Attribution,Point,0.037107042,221,25260,*,*,Los Angeles Lakers,*,*,*,618,1673.1134,-1525.6761
+lg_name,NBA,AST,0.949108562,0.039097888,Attribution,Point,0.03710814,520,25260,*,*,Los Angeles Lakers,*,*,*,621,-1673.1132,1525.6761
