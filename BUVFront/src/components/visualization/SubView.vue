@@ -1,8 +1,11 @@
 <template>
     <g :transform="transform">
-        <!--        <circle rx="0" ry="0" r="3" fill="red"></circle>-->
+        <foreignObject :x="0" :y="0" :width="width" :height="height">
+            <canvas class='canvasContainer' :width="width" :height="height"></canvas>
+        </foreignObject>
         <rect :width="width" :height="height" fill="none" stroke="grey" stroke-width="1"></rect>
-        <rect fill="red" x="100" y="20" width="20" height="20" v-on:click="click"></rect>
+        <!--        <rect fill="red" x="100" y="20" width="20" height="20" v-on:click="click"></rect>-->
+        <g class="voronoiContainer"></g>
         <g v-if="init">
             <Dot v-for="(loc, i) in locs" :key='i'
                  :xScale="xScale"
@@ -34,10 +37,7 @@ export default {
             locs: []
         }
     },
-    mounted(){
-        this.avoidOverlap()
-        this.init = true
-    },
+    mounted(){    },
     computed: {
         // xScale(){
         //     return d3.scaleLinear().domain(this.xRange).range([this.boundary, this.wholeWidth-this.boundary])
@@ -68,22 +68,51 @@ export default {
             this.yRange = d3.extent(this.subData.loc, d=>d[1])
             this.xScale.domain(this.xRange);
             this.yScale.domain(this.yRange)
-            console.log('domain  ', this.viewID, this.xRange, this.yRange, this.subData)
-            console.log('range  ',this.xScale.range(), this.yScale.range() )
-
-            this.locs = Array.from(this.allData[this.viewID].loc, d=>{
-                return {x:d[0], y:d[1]}
+            // data: this.subData.data[i]
+            this.locs = Array.from(this.allData[this.viewID].loc, (d, i)=>{
+                return {x:d[0], y:d[1], c:d[2], score: this.subData.data[i].score}
             })
+            let groups = d3.groups(this.locs, d=>d.c)
 
+            let groupObjs = Array.from(groups, d=>{
+                return {
+                    clusterId: d[0],
+                    x: d3.mean(d[1], e=>e.x),
+                    y: d3.mean(d[1], e=>e.y),
+                    avgScore: d3.mean(d[1], e=>e.score)
+                }
+            })
+            this.avoidOverlap()
+            this.avoidOverlap()
+            this.renderVoronoi(groupObjs)
         },
         locs(){
             console.log('new loc', this.loc)
-        }
+        },
+        init(){}
     },
+
+    // ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
     methods:{
-        // disf(a, b){
-        //     return Math.sqrt((this.xScale(a[0]) - this.xScale(b[0]))**2 + (this.yScale(a[1]) - this.yScale(b[1]))**2)
-        // },
+        renderVoronoi(particles){
+            let width = this.width;
+            let height = this.height;
+            // const particles = Array.from({length: 100}, () => [Math.random() * width, Math.random() * height]);
+            // console.log('particles', particles[0])
+            const delaunay = d3.Delaunay.from(particles, d=>this.xScale(d.x), d=>this.yScale(d.y));
+            const voronoi = delaunay.voronoi([0.5, 0.5, width - 0.5, height - 0.5]);
+
+            let line = d3.line().x(d=>d[0]).y(d=>d[1])
+            let polyContainer = d3.select(this.$el).select('.voronoiContainer')
+            polyContainer.selectAll('*').remove()
+            for(let polygon of voronoi.cellPolygons()){
+                let color = d3.interpolateYlGn(particles[polygon.index].avgScore)
+                polyContainer.append('path').attr('d', line(polygon)).attr('fill', color)
+                    .attr('fill-opacity', 0.5)
+                    .attr('stroke','grey').attr('stroke-width', 1)
+            }
+
+        },
         disf(a, b){
             return Math.sqrt((this.xScale(a.x) - this.xScale(b.x))**2 + (this.yScale(a.y) - this.yScale(b.y))**2)
         },

@@ -3,7 +3,7 @@
         <path  :d="symboScale(data.insight)"
                @mouseover="mouseover"
                @mouseout="mouseout"
-               fill="yellow" fill-opacity="0.5" :stroke="stroke" :stroke-width="strokeWidth"></path>
+               fill="#ff7f0e" fill-opacity="0.5" :stroke="stroke" :stroke-width="strokeWidth"></path>
 
 <!--        <circle-->
 <!--                r="5"-->

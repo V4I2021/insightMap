@@ -54,9 +54,10 @@
                       :stroke="d.same == false? 'steelblue' : 'orange'"
                       stroke-width="2"
                       stroke-opacity="0.3"
-                      stroke-dasharray="3 1"
+
                       fill="none">
                 </path>
+<!--                stroke-dasharray="3 1"-->
             </g>
         </g>
     </svg>
@@ -82,7 +83,7 @@ export default {
             width: 0,  height: 0,
             px: 0,  py: 0,
             init: false,
-            boundary: 10,
+            boundary: 30,
 
             scaleConfig:{
                 'A': {

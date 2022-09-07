@@ -11,6 +11,10 @@ from sklearn.manifold import spectral_embedding
 
 import time
 
+
+from sklearn.metrics import silhouette_score
+from sklearn.cluster import AgglomerativeClustering
+
 FILE_ABS_PATH = os.path.dirname(__file__)
 
 app = Flask(__name__)
@@ -136,13 +140,46 @@ def calc_projection(sim, index_list, app_id, perplexity):
     X_embedded = generate_projection(sub_matrix, perplexity)
     return X_embedded
 
+
+def best_clustering(X_embedded, min_cluster=2, max_cluster=50):
+    max_score = -1
+    max_labels = None
+    max_n = -1
+    for i in range(min_cluster, max_cluster):
+        clustering = AgglomerativeClustering(n_clusters=i).fit(X_embedded)
+        score = silhouette_score(
+            X_embedded,
+            clustering.labels_,
+            metric="euclidean",
+        )
+
+        if max_score < score:
+            max_score = score
+            max_labels = clustering.labels_
+            max_n = i
+    print('Max cluster number {}, best cluster number {}'.format(max_cluster, max_n))
+    return max_score, i, max_labels
+
+def calc_projection_with_cluster(sim, index_list, app_id, perplexity):
+    simFile = '{}/data/{}/similarity.npz'.format(FILE_ABS_PATH, app_id)
+    matrix = np.load(simFile) if (type(sim) == str or sim is None) else sim
+    matrix = matrix['sim']
+    sub_matrix = matrix[index_list][:, index_list]
+    X_embedded = generate_projection(sub_matrix, perplexity)
+    score, n, labels = best_clustering(X_embedded, max_cluster=min(50, X_embedded.shape[0]))
+    return X_embedded, labels
+
+
 @app.route('/api/test/generateProjectionByApp/', methods=['POST'])
 def return_projection():
     params = request.json
     app_id = params['appID']
     index_list = params['indexList']
-    embedded = calc_projection(None, index_list, app_id, 12)
-    return json.dumps(embedded.tolist())
+    start_time = time.time()
+    embedded, labels = calc_projection_with_cluster(None, index_list, app_id, 25)
+    merge_list = np.concatenate((embedded, labels.reshape(labels.shape[0], 1)), axis=1)
+    print('Use time', time.time() - start_time)
+    return json.dumps(merge_list.tolist())
 
 
 if __name__ == '__main__':
