@@ -22,17 +22,18 @@ import {mapState} from "vuex";
 
 export default {
     name: "Dot",
-    props:['xScale', 'yScale', 'loc', 'data', 'symboScale'],
+    props:['data', 'symboScale', 'cx', 'cy'],
     data(){
         return {
 
         }
     },
     mounted(){
+        console.log('dot')
     },
     computed:{
         transform(){
-            return "translate(" + [this.xScale(this.loc.x), this.yScale(this.loc.y)] + ")"
+            return "translate(" + [this.cx, this.cy] + ")"
         },
         path(){
             return d3.symbol()

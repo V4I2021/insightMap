@@ -6,11 +6,10 @@
         <rect :width="width" :height="height" fill="none" stroke="grey" stroke-width="1"></rect>
         <!--        <rect fill="red" x="100" y="20" width="20" height="20" v-on:click="click"></rect>-->
         <g class="voronoiContainer"></g>
-        <g v-if="init">
+        <g v-if="true">
             <Dot v-for="(loc, i) in locs" :key='i'
-                 :xScale="xScale"
-                 :yScale="yScale"
-                 :loc="loc"
+                 :cx="loc.cx"
+                 :cy="loc.cy"
                  :data="subData.data[i]"
                  :symboScale="symboScale"
             ></Dot>
@@ -39,6 +38,9 @@ export default {
     },
     mounted(){    },
     computed: {
+        xScaleD1(){
+            return this.xScale.range()[1]
+        },
         // xScale(){
         //     return d3.scaleLinear().domain(this.xRange).range([this.boundary, this.wholeWidth-this.boundary])
         // },
@@ -63,22 +65,50 @@ export default {
         // }
     },
     watch:{
+        width(){
+            this.updateLayout()
+        },
+        xScaleD1(val){
+            console.log('vvv', val)
+        },
         updateCount(){
-            this.xRange = d3.extent(this.subData.loc, d=>d[0])
-            this.yRange = d3.extent(this.subData.loc, d=>d[1])
-            this.xScale.domain(this.xRange);
-            this.yScale.domain(this.yRange)
+            this.updateLayout()
+        },
+        locs(){
+            console.log('new loc', this.loc)
+        },
+        init(){
+
+        }
+    },
+
+    // ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
+    methods:{
+        updateLayout(){
+
+            this.xDomain = d3.extent(this.subData.loc, d=>d[0])
+            this.yDomain = d3.extent(this.subData.loc, d=>d[1])
+            this.xScale.domain(this.xDomain);
+            this.yScale.domain(this.yDomain);
+
+            console.log('xRange ', this.xScale.domain(), this.xScale.range())
             // data: this.subData.data[i]
             this.locs = Array.from(this.allData[this.viewID].loc, (d, i)=>{
-                return {x:d[0], y:d[1], c:d[2], score: this.subData.data[i].score}
+                return {
+                    x:d[0],
+                    y:d[1],
+                    c:d[2],
+                    score: this.subData.data[i].score,
+                    cx:this.xScale(d[0]),
+                    cy:this.yScale(d[1]),
+                }
             })
             let groups = d3.groups(this.locs, d=>d.c)
-
             let groupObjs = Array.from(groups, d=>{
                 return {
                     clusterId: d[0],
-                    x: d3.mean(d[1], e=>e.x),
-                    y: d3.mean(d[1], e=>e.y),
+                    x: d3.mean(d[1], e=>e.cx),
+                    y: d3.mean(d[1], e=>e.cy),
                     avgScore: d3.mean(d[1], e=>e.score)
                 }
             })
@@ -86,20 +116,12 @@ export default {
             this.avoidOverlap()
             this.renderVoronoi(groupObjs)
         },
-        locs(){
-            console.log('new loc', this.loc)
-        },
-        init(){}
-    },
-
-    // ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"]
-    methods:{
         renderVoronoi(particles){
             let width = this.width;
             let height = this.height;
             // const particles = Array.from({length: 100}, () => [Math.random() * width, Math.random() * height]);
             // console.log('particles', particles[0])
-            const delaunay = d3.Delaunay.from(particles, d=>this.xScale(d.x), d=>this.yScale(d.y));
+            const delaunay = d3.Delaunay.from(particles, d=>d.x, d=>d.y);
             const voronoi = delaunay.voronoi([0.5, 0.5, width - 0.5, height - 0.5]);
 
             let line = d3.line().x(d=>d[0]).y(d=>d[1])
@@ -142,7 +164,7 @@ export default {
                 }
             }
             this.init = true
-            console.log('runs', nOverlap)
+            console.log('nOverlap', nOverlap)
         }
     }
 }

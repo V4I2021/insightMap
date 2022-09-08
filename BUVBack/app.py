@@ -39,31 +39,6 @@ def hello_resp():
     return "hello VUE"
 
 
-@app.route('/api/test/fetchData/', methods=['POST'])
-def fetch_data():
-    A_data_path = '{}/data/{}/projection.csv'.format(FILE_ABS_PATH, 'NBA')
-    B_data_path = '{}/data/{}/subspace.csv'.format(FILE_ABS_PATH, 'NBA')
-    C_data_path = '{}/data/{}/breakdown.csv'.format(FILE_ABS_PATH, 'NBA')
-    D_data_path = '{}/data/{}/bs.csv'.format(FILE_ABS_PATH, 'NBA')
-
-    # with open(data_path, 'r') as input_file:
-    #     data = json.load(input_file)
-    #     return data
-
-    A_df = pd.read_csv(A_data_path)
-    A_results = A_df.to_dict('records')
-    B_df = pd.read_csv(B_data_path)
-    B_results = B_df.to_dict('records')
-    C_df = pd.read_csv(C_data_path)
-    C_results = C_df.to_dict('records')
-    D_df = pd.read_csv(D_data_path)
-    D_results = D_df.to_dict('records')
-
-    return json.dumps({'A_results': A_results,
-                       'B_results': B_results,
-                       'C_results': C_results,
-                       'D_results': D_results})
-
 def read_data(app_id):
     insight_path = '{}/data/{}/insight.csv'.format(FILE_ABS_PATH, app_id)
     subspace_path = '{}/data/{}/subspace.csv'.format(FILE_ABS_PATH, app_id)

@@ -57,8 +57,13 @@
 
                       fill="none">
                 </path>
-<!--                stroke-dasharray="3 1"-->
+                <!--                stroke-dasharray="3 1"-->
             </g>
+
+
+        </g>
+        <g class="circleContainer">
+            <circle r=25 fill="red" :transform="'translate(' + [tpx, tpy] + ')'"> </circle>
         </g>
     </svg>
 </template>
@@ -82,25 +87,26 @@ export default {
         return {
             width: 0,  height: 0,
             px: 0,  py: 0,
+            tpx:0, tpy:0,
             init: false,
             boundary: 30,
 
             scaleConfig:{
                 'A': {
-                    xScale: d3.scaleLinear(),
-                    yScale: d3.scaleLinear(),
+                    xScale: d3.scaleLinear().domain([0, 1]).range([0,1]),
+                    yScale: d3.scaleLinear().domain([0, 1]).range([0,1]),
                 },
                 'B':{
-                    xScale: d3.scaleLinear(),
-                    yScale: d3.scaleLinear(),
+                    xScale: d3.scaleLinear().domain([0, 1]).range([0,1]),
+                    yScale: d3.scaleLinear().domain([0, 1]).range([0,1]),
                 },
                 'C':{
-                    xScale: d3.scaleLinear(),
-                    yScale: d3.scaleLinear(),
+                    xScale: d3.scaleLinear().domain([0, 1]).range([0,1]),
+                    yScale: d3.scaleLinear().domain([0, 1]).range([0,1]),
                 },
                 'D':{
-                    xScale: d3.scaleLinear(),
-                    yScale: d3.scaleLinear(),
+                    xScale: d3.scaleLinear().domain([0, 1]).range([0,1]),
+                    yScale: d3.scaleLinear().domain([0, 1]).range([0,1]),
                 }
             },
 
@@ -119,6 +125,9 @@ export default {
         this.px = this.width * 0.7
         this.py = this.height * 0.7
 
+        this.tpx = this.px
+        this.tpy = this.py
+
         this.offsetConfig = {
             "A":[0,0],
             "B":[this.px,0],
@@ -126,22 +135,51 @@ export default {
             "D":[this.px,this.py]
         }
 
-        this.scaleConfig.A.xScale.range([this.boundary, this.px-this.boundary])
-        this.scaleConfig.A.yScale.range([this.boundary, this.py-this.boundary])
+        let ratioCircle = d3.select(this.$el).select('.circleContainer').select('circle')
+        console.log('rationCircle', ratioCircle)
+        ratioCircle.call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended)
+        );
 
-        this.scaleConfig.B.xScale.range([this.boundary, this.width - this.px-this.boundary])
-        this.scaleConfig.B.yScale.range([this.boundary, this.height - this.py-this.boundary])
+        function dragstarted() {
 
-        this.scaleConfig.C.xScale.range([this.boundary, this.px-this.boundary])
-        this.scaleConfig.C.yScale.range([this.boundary, this.height - this.py-this.boundary])
+        }
+        let _this = this;
+        function dragged(event) {
+            _this.tpx = event.x;
+            _this.tpy = event.y;
+            // console.log('dragiiiiiiiiiiiiiiiiiing',event, d)
+        }
 
-        this.scaleConfig.D.xScale.range([this.boundary, this.width - this.px-this.boundary])
-        this.scaleConfig.D.yScale.range([this.boundary, this.height - this.py-this.boundary])
+        function dragended() {
+            _this.px = _this.tpx;
+            _this.py = _this.tpy;
+            _this.updateScale();
+        }
+
+        this.updateScale()
 
         this.init = true
     },
     methods:{
 
+        updateScale(){
+            this.scaleConfig.A.xScale.range([this.boundary, this.px-this.boundary])
+            this.scaleConfig.A.yScale.range([this.boundary, this.py-this.boundary])
+
+            this.scaleConfig.B.xScale.range([this.boundary, this.width - this.px-this.boundary])
+            this.scaleConfig.B.yScale.range([this.boundary, this.height - this.py-this.boundary])
+
+            this.scaleConfig.C.xScale.range([this.boundary, this.px-this.boundary])
+            this.scaleConfig.C.yScale.range([this.boundary, this.height - this.py-this.boundary])
+
+            this.scaleConfig.D.xScale.range([this.boundary, this.width - this.px-this.boundary])
+            this.scaleConfig.D.yScale.range([this.boundary, this.height - this.py-this.boundary])
+
+            console.log('update Scale', this.scaleConfig.A.xScale.range(), this.scaleConfig.A.xScale.domain())
+        }
     },
     watch:{
         selectedLinks(){
@@ -167,7 +205,6 @@ export default {
 
                 let srcOffset = this.offsetConfig[srcViewIndex];
                 let dstOffset = this.offsetConfig[dstViewIndex];
-
 
                 let srcScale = this.scaleConfig[srcViewIndex];
                 let dstScale = this.scaleConfig[dstViewIndex];
