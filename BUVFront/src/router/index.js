@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import TestPage from "@/view/TestPage";
+import TestPage from "@/view/MainPage";
 
 Vue.use(VueRouter)
 

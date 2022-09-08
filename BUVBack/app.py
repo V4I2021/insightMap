@@ -8,6 +8,7 @@ import numpy as np
 
 from sklearn.manifold import TSNE
 from sklearn.manifold import spectral_embedding
+from dataService.dataService import DataService
 
 import time
 
@@ -20,14 +21,12 @@ FILE_ABS_PATH = os.path.dirname(__file__)
 app = Flask(__name__)
 CORS(app)
 
-
+dm = DataService()
 @app.route('/api/test/counter/', methods=['POST'])
 def update_counter():
     params = request.json
     counter = int(params['counter'])
-
     counter += 1
-
     resp = {'counter': counter}
     return jsonify(resp), 200, {"Content-Type": "application/json"}
 
@@ -169,7 +168,6 @@ def calc_projection_with_cluster(sim, index_list, app_id, perplexity):
     score, n, labels = best_clustering(X_embedded, max_cluster=min(50, X_embedded.shape[0]))
     return X_embedded, labels
 
-
 @app.route('/api/test/generateProjectionByApp/', methods=['POST'])
 def return_projection():
     params = request.json
@@ -181,6 +179,23 @@ def return_projection():
     print('Use time', time.time() - start_time)
     return json.dumps(merge_list.tolist())
 
+@app.route('/api/test/getInsightByIID/', methods=['POST'])
+def getInsightByIID():
+    st = time.time()
+    params = request.json
+    app_id = params['appID']
+    iid = params['iid']
+
+    result = dm.get_insight_by_iid(iid, app_id)
+    print('Query insight use time: ', app_id, iid, time.time() - st)
+    result['iid'] = iid
+    return result
 
 if __name__ == '__main__':
     app.run()
+    # st = time.time()
+    #
+    # dm = DataService()
+    # result = dm.get_insight_by_iid(110, 'NBA')
+    # print('rrrr', result)
+    # print('time.time', time.time() - st)

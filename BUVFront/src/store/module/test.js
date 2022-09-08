@@ -24,7 +24,9 @@ const state = () => ({
   index2View: {},
   index2Loc: {},
   selectedDots: [],
-  highlightedDots: []
+  highlightedDots: [],
+
+  selectedInsights: []
 })
 
 // getters
@@ -146,6 +148,22 @@ const mutations = {
       state.selectLinks = []
       state.highlightedDots = []
     }
+  },
+  selectDotByClick(state, para){
+    let st = new Date()
+    let iid = para
+    console.log('Length', state.selectedInsights.length)
+    for(let i=0, ilen = state.selectedInsights.length; i < ilen; i++){
+      if(iid == state.selectedInsights[i].iid){
+        return
+      }
+    }
+    dataService.fetchInsightByIID({appID: state.appID, iid: para},d=>{
+      state.selectedInsights.push(d)
+      console.log('Query insight using time: ', new Date() - st)
+      console.log('Length', state.selectedInsights.length)
+      console.log('state ', state.selectedInsights)
+    })
   }
 }
 

@@ -43,6 +43,15 @@ export function generateProjectionByApp(param, callback) {
     })
 }
 
+export function fetchInsightByIID(param, callback) {
+  const url=`${TEST_URL_PREFIX}/getInsightByIID/`;
+  axios.post(url, param)
+    .then(response =>{
+      callback(response.data)
+    }, errResponse => {
+      console.log(errResponse)
+    })
+}
 
 export function generateSubProjectionByApp(param, callback) {
   const url=`${TEST_URL_PREFIX}/generateSubProjectionByApp/`;

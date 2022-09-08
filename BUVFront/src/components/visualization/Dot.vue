@@ -3,14 +3,16 @@
         <path  :d="symboScale(data.insight)"
                @mouseover="mouseover"
                @mouseout="mouseout"
-               fill="#ff7f0e" fill-opacity="0.5" :stroke="stroke" :stroke-width="strokeWidth"></path>
+               fill="#ff7f0e" fill-opacity="0.5" :stroke="stroke" :stroke-width="strokeWidth"
+               @click="clickOnDot"
+        ></path>
 
-<!--        <circle-->
-<!--                r="5"-->
-<!--                @mouseover="mouseover"-->
-<!--                @mouseout="mouseout"-->
-<!--                fill="steelblue" fill-opacity="0.5" :stroke="stroke" :stroke-width="strokeWidth"-->
-<!--        ></circle>-->
+        <!--        <circle-->
+        <!--                r="5"-->
+        <!--                @mouseover="mouseover"-->
+        <!--                @mouseout="mouseout"-->
+        <!--                fill="steelblue" fill-opacity="0.5" :stroke="stroke" :stroke-width="strokeWidth"-->
+        <!--        ></circle>-->
     </g>
 </template>
 
@@ -75,6 +77,9 @@ export default {
         },
         mouseout(){
             this.$store.commit('test/selectDot', false)
+        },
+        clickOnDot(){
+            this.$store.commit('test/selectDotByClick', this.data.iid)
         }
     }
 }
