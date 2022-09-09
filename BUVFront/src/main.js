@@ -9,6 +9,9 @@ Vue.config.productionTip = false
 // Plugin 用法↓， 类似的用法还有mixins, extend方法
 Vue.use(ElementUI, {locale})
 
+import * as echarts from 'echarts';
+Vue.prototype.$echarts = echarts
+
 import router from '@/router'
 import store from '@/store'
 
