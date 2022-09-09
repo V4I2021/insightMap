@@ -163,7 +163,7 @@ def best_clustering(X_embedded, min_cluster=2, max_cluster=50):
             max_labels = clustering.labels_
             max_n = i
     print('Max cluster number {}, best cluster number {}'.format(max_cluster, max_n))
-    return max_score, i, max_labels
+    return max_score, max_n, max_labels
 
 def calc_projection_with_cluster(sim, index_list, app_id, perplexity):
     simFile = '{}/data/{}/similarity.npz'.format(FILE_ABS_PATH, app_id)

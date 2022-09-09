@@ -18,7 +18,7 @@ export default {
         return {
             width: 0,
             height: 0,
-            unitHeight: 50,
+            unitHeight: 30,
             init: false,
             offsetLeft: 150,
         }
