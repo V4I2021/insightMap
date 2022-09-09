@@ -40,15 +40,10 @@ export default {
                                 type: "category",
                                 splitNumber: 3,
                                 data: item["breakdown_value"],
-                                // axisLabel: {
-                                //     interval: 0,
-                                //     formatter: function (value) {
-                                //         return longNameFormatter(7, value);
-                                //     }
-                                // }
                             },
                             yAxis: {
                                 type: "value",
+                                splitNumber: 5,
                                 axisLabel: {
                                     formatter: function (value) {
                                         return numberFormatter(value);
@@ -84,9 +79,7 @@ export default {
                             },
                             yAxis: {
                                 type: "value",
-                                // min: function (value) {
-                                //   return 0;
-                                // },
+                                splitNumber: 5,
                                 axisLabel: {
                                     formatter: function (value) {
                                         return numberFormatter(value);
@@ -128,9 +121,7 @@ export default {
                             },
                             yAxis: {
                                 type: "value",
-                                // min: function (value) {
-                                //   return 0;
-                                // },
+                                splitNumber: 5,
                                 axisLabel: {
                                     formatter: function (value) {
                                         return numberFormatter(value);
@@ -172,9 +163,7 @@ export default {
                             },
                             yAxis: {
                                 type: "value",
-                                // min: function (value) {
-                                //   return 0;
-                                // },
+                                splitNumber: 5,
                                 axisLabel: {
                                     formatter: function (value) {
                                         return numberFormatter(value);
@@ -226,10 +215,10 @@ export default {
                                 {
                                     name: "Access From",
                                     type: "pie",
-                                    radius: ['50%', '90%'],
+                                    radius: ["50%", "90%"],
                                     itemStyle: {
                                         borderRadius: 10,
-                                        borderColor: '#fff',
+                                        borderColor: "#fff",
                                         borderWidth: 2
                                     },
                                     label: {
@@ -239,8 +228,8 @@ export default {
                                     emphasis: {
                                         label: {
                                             show: true,
-                                            fontSize: '18',
-                                            fontWeight: 'bold'
+                                            fontSize: "18",
+                                            fontWeight: "bold"
                                         }
                                     },
                                     labelLine: {
@@ -255,7 +244,8 @@ export default {
             } else if (item["insight_name"] === "Cross Measure Correlation") {
                 const cnt = item["x_value"].length;
                 const minX = item["x_value"][0], maxX = item["x_value"][cnt - 1],
-                        minY = item["y_value"][0], maxY = item["y_value"][cnt - 1];
+                        minY = Math.min(item["line_y_value"][0], item["y_value"][0]),
+                        maxY = Math.max(item["line_y_value"][1], item["y_value"][cnt - 1]);
 
                 let data = [];
                 item["x_value"].forEach((val, i) => {
@@ -286,6 +276,7 @@ export default {
                             yAxis: {
                                 min: minY,
                                 max: maxY,
+                                splitNumber: 5,
                                 axisLabel: {
                                     formatter: function (value) {
                                         return numberFormatter(value);
@@ -320,7 +311,8 @@ export default {
             } else if (item["insight_name"] === "Clustering") {
                 const cnt = item["x_value"].length;
                 const minX = item["x_value"][0], maxX = item["x_value"][cnt - 1],
-                        minY = item["y_value"][0], maxY = item["y_value"][cnt - 1];
+                        minY = Math.min(item["line_y_value"][0], item["y_value"][0]),
+                        maxY = Math.max(item["line_y_value"][1], item["y_value"][cnt - 1]);
 
                 let group1 = [], group2 = [];
                 item["x_value"].forEach((val, i) => {
@@ -355,6 +347,7 @@ export default {
                             yAxis: {
                                 min: minY,
                                 max: maxY,
+                                splitNumber: 5,
                                 axisLabel: {
                                     formatter: function (value) {
                                         return numberFormatter(value);
