@@ -1,7 +1,7 @@
 <template>
     <svg>
         <g v-if="init">
-            <g v-for="(columnObj, i) in inputData" :key="i" :transform="'translate(' + [0, i * (unitHeight + 20)] + ')'">
+            <g v-for="(columnObj, i) in inputData" :key="i" :transform="'translate(' + [0, i * (unitHeight + 5)] + ')'">
                 <ColumnVis :data="columnObj" :width="width" :height="unitHeight"></ColumnVis>
             </g>
         </g>
