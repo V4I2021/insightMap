@@ -119,8 +119,7 @@ export default {
         renderVoronoi(particles){
             let width = this.width;
             let height = this.height;
-            // const particles = Array.from({length: 100}, () => [Math.random() * width, Math.random() * height]);
-            // console.log('particles', particles[0])
+
             const delaunay = d3.Delaunay.from(particles, d=>d.x, d=>d.y);
             const voronoi = delaunay.voronoi([0.5, 0.5, width - 0.5, height - 0.5]);
 
@@ -136,8 +135,11 @@ export default {
 
         },
         disf(a, b){
-            return Math.sqrt((this.xScale(a.x) - this.xScale(b.x))**2 + (this.yScale(a.y) - this.yScale(b.y))**2)
+            return Math.sqrt((a.cx - b.cx)**2 + (a.cy - b.cy)**2)
         },
+        // disf(a, b){
+        //     return Math.sqrt((this.xScale(a.x) - this.xScale(b.x))**2 + (this.yScale(a.y) - this.yScale(b.y))**2)
+        // },
         click(){
             console.log('click')
             this.avoidOverlap()
@@ -153,12 +155,12 @@ export default {
                     let dst = locs[j]
                     let dis = this.disf(src, dst)
                     if(dis < r){
-                        let dx = dst.x - src.x
-                        let dy = dst.y - src.y
-                        dst.x += dx
-                        dst.y += dy
-                        src.x -= dx
-                        src.y -= dy
+                        let dx = dst.cx - src.cx
+                        let dy = dst.cy - src.cy
+                        dst.cx += dx
+                        dst.cy += dy
+                        src.cx -= dx
+                        src.cy -= dy
                         nOverlap += 1
                     }
                 }

@@ -7,7 +7,6 @@
                     <text x="20" y="5" style="font-size: 10px">{{ d.insight}}</text>
                 </g>
             </g>
-
             <sub-view
                     class="A"
                     :x="0" :y="0"
@@ -54,16 +53,18 @@
                       :stroke="d.same == false? 'steelblue' : 'orange'"
                       stroke-width="2"
                       stroke-opacity="0.3"
-
                       fill="none">
                 </path>
-                <!--                stroke-dasharray="3 1"-->
             </g>
 
 
         </g>
         <g class="circleContainer">
-            <circle r=25 fill="red" :transform="'translate(' + [tpx, tpy] + ')'"> </circle>
+            <line v-if="moving" class="axis" stroke='grey' stroke-dasharray="2 2" stroke-width="0.5" :x1="0" :y1="tpy" :x2="width" :y2="tpy"></line>
+            <line v-if="moving" class="axis" stroke='grey' stroke-dasharray="2 2" stroke-width="1" :x1="tpx" :y1="0" :x2="tpx" :y2="height"></line>
+            <g class="control" :transform="'translate(' + [tpx, tpy] + ')'">
+                <ControlGlyph></ControlGlyph>
+            </g>
         </g>
     </svg>
 </template>
@@ -73,6 +74,7 @@
 import SubView from "@/components/visualization/SubView";
 import * as d3 from "d3";
 import {mapState} from "vuex";
+import ControlGlyph from "@/components/visualization/ControlGlyph";
 
 let curveGenerator = d3.line()
     .x((p) => p.x)
@@ -81,7 +83,7 @@ let curveGenerator = d3.line()
 
 export default {
     name: "MainView",
-    components: {SubView},
+    components: {ControlGlyph, SubView},
     props:['records', 'allData', 'symboScale', 'insightTypes'],
     data(){
         return {
@@ -90,7 +92,7 @@ export default {
             tpx:0, tpy:0,
             init: false,
             boundary: 30,
-
+            moving: false,
             scaleConfig:{
                 'A': {
                     xScale: d3.scaleLinear().domain([0, 1]).range([0,1]),
@@ -135,28 +137,28 @@ export default {
             "D":[this.px,this.py]
         }
 
-        let ratioCircle = d3.select(this.$el).select('.circleContainer').select('circle')
+        let ratioCircle = d3.select(this.$el).select('.circleContainer').select('.control')
         console.log('rationCircle', ratioCircle)
         ratioCircle.call(d3.drag()
             .on("start", dragstarted)
             .on("drag", dragged)
             .on("end", dragended)
         );
-
-        function dragstarted() {
-
-        }
         let _this = this;
+        function dragstarted() {
+            _this.moving = true
+        }
+
         function dragged(event) {
             _this.tpx = event.x;
             _this.tpy = event.y;
-            // console.log('dragiiiiiiiiiiiiiiiiiing',event, d)
         }
 
         function dragended() {
             _this.px = _this.tpx;
             _this.py = _this.tpy;
             _this.updateScale();
+            _this.moving = false
         }
 
         this.updateScale()
@@ -177,8 +179,6 @@ export default {
 
             this.scaleConfig.D.xScale.range([this.boundary, this.width - this.px-this.boundary])
             this.scaleConfig.D.yScale.range([this.boundary, this.height - this.py-this.boundary])
-
-            console.log('update Scale', this.scaleConfig.A.xScale.range(), this.scaleConfig.A.xScale.domain())
         }
     },
     watch:{
