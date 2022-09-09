@@ -22,7 +22,6 @@ RECORD_FOLDER = os.path.join(ROOT_PATH, 'data/record')
 SID_CID_FOLDER = os.path.join(ROOT_PATH, 'data/sid_cid')
 SUBSPACE_FOLDER = os.path.join(ROOT_PATH, 'data/subspace')
 
-
 DATA_FOLDER = os.path.join(FILE_ABS_PATH, '../data')
 
 sns_counter = 0
@@ -79,6 +78,7 @@ class DataService():
         # print(sid_cid_path)
         df = pd.read_csv(sid_cid_path)
         return df
+
     # @cache.memoize(timeout=50)
     # Old
     # def __get_subspace_by_name(self, name):
@@ -236,12 +236,19 @@ class DataService():
                 value = insight[col_list[i]].values[0]
                 if value != '*':
                     record = record.loc[record[col_list[i]] == value]
+
             if breakdown_value[1] != '*':
-                corr_record = record.loc[record[insight['breakdown'].values[0]] == breakdown_value[1]]
+                breakdown_value_copy = breakdown_value[1]
+                if str.isdigit(breakdown_value[1]):
+                    breakdown_value_copy = int(breakdown_value[1])
+                corr_record = record.loc[record[insight['breakdown'].values[0]] == breakdown_value_copy]
             else:
                 corr_record = record.copy()
             if breakdown_value[0] != '*':
-                record = record.loc[record[insight['breakdown'].values[0]] == breakdown_value[0]]
+                breakdown_value_copy = breakdown_value[0]
+                if str.isdigit(breakdown_value[0]):
+                    breakdown_value_copy = int(breakdown_value[0])
+                record = record.loc[record[insight['breakdown'].values[0]] == breakdown_value_copy]
 
             corr_record = corr_record.groupby(time_col, as_index=False).agg(
                 {breakdown: 'first', measure: 'sum'})
@@ -316,11 +323,11 @@ class DataService():
                 percentage[i] = round(percentage[i], 2)
                 if i == 0:
                     breakdown_value_list += '<span style="color:#f7cd59; display:inline;">' \
-                                            + breakdown_value[i] + '</span>, '
+                                            + str(breakdown_value[i]) + '</span>, '
                     percentage_list += '<span style="color:#f7cd59; display:inline;">' \
                                        + str(percentage[i]) + '</span>, '
                 else:
-                    breakdown_value_list += breakdown_value[i] + ', '
+                    breakdown_value_list += str(breakdown_value[i]) + ', '
                     percentage_list += str(percentage[i]) + ', '
             if breakdown_value_list[-2:] == ', ':
                 breakdown_value_list = breakdown_value_list[0:-2]
