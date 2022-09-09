@@ -38,14 +38,32 @@ def hello_resp():
     print(msg)
     return "hello VUE"
 
+def calc_value_count(name, subspace_columns):
+    record_df = pd.read_csv('./data/{}/record.csv'.format(name))
+    record_df = record_df[subspace_columns[:-1]]
+    subspace_c = record_df.columns
+    record_df['count'] = 1
+    lists = []
+    for column in subspace_c:
+        dtype = record_df[column]
+        r_df = record_df[[column, 'count']].groupby(column).count().reset_index()
+        if record_df[column].dtypes == 'object':
+            countList = r_df.sort_values('count', ascending=False).values.tolist()
+            lists.append({'column': column, 'type': 'obj',  'list': countList})
+        else:
+            countList = r_df.sort_values(column, ascending=True).values.tolist()
+            lists.append({'column':column, 'type': 'number', 'list': countList })
+    return lists
 
 def read_data(app_id):
     insight_path = '{}/data/{}/insight.csv'.format(FILE_ABS_PATH, app_id)
     subspace_path = '{}/data/{}/subspace.csv'.format(FILE_ABS_PATH, app_id)
+    record_path = '{}/data/{}/record.csv'.format(FILE_ABS_PATH, app_id)
+
     insight_df = pd.read_csv(insight_path)
     subspace_df = pd.read_csv(subspace_path)
+    record_df = pd.read_csv(record_path)
 
-    # only hard code for NBA
     insight_columns = insight_df.columns[:10]
     result_df = insight_df[insight_columns].merge(subspace_df, left_on='sid', right_on='sid')
     result_df['index'] = result_df.index
@@ -58,13 +76,25 @@ def read_data(app_id):
     subspace_statistics = {}
     for e in subspace_columns:
         subspace_statistics[e] = list(result_df[e].unique())
-    return result_df, subspace_columns, measure_values, insight_count, breakdown_count, subspace_statistics
+
+    record_df['count'] = 1
+    lists = []
+    for column in subspace_columns:
+        r_df = record_df[[column, 'count']].groupby(column).count().reset_index()
+        if record_df[column].dtypes == 'object':
+            countList = r_df.sort_values('count', ascending=False).values.tolist()
+            lists.append({'column': column, 'type': 'obj',  'list': countList})
+        else:
+            countList = r_df.sort_values(column, ascending=True).values.tolist()
+            lists.append({'column': column, 'type': 'number', 'list': countList })
+
+    return result_df, subspace_columns, measure_values, insight_count, breakdown_count, subspace_statistics, lists
 
 @app.route('/api/test/fetchDataByApp/', methods=['POST'])
 def read_all_insight():
     params = request.json
     app_id = params['appID']
-    result_df, subspace_columns, measure_values, insight_types, breakdown_count, subspace_statistics = read_data(app_id)
+    result_df, subspace_columns, measure_values, insight_types, breakdown_count, subspace_statistics, subspace_raw_count = read_data(app_id)
 
     projection_path = '{}/data/{}/projection.npz'.format(FILE_ABS_PATH, app_id)
     all_projection = np.load(projection_path)['projection']
@@ -78,7 +108,8 @@ def read_all_insight():
         'insight_types': insight_types,
         'breakdown_count': breakdown_count,
         'subspace_statistics': subspace_statistics,
-        'sim_matrix': matrix.tolist()
+        'sim_matrix': matrix.tolist(),
+        'subspace_raw_count': subspace_raw_count
     })
 
 def generate_projection(sim_matrix, perplexity):

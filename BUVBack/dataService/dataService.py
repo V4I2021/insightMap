@@ -150,7 +150,6 @@ class DataService():
         return res
 
     def get_insight_by_iid(self, iid, name):
-        print('iid ', iid)
         insight_data, insight_name, insight_type = self.__get_insight_by_name(name)
         subspace_data, feature_data = self.__get_subspace_by_name(name)
         insight = insight_data.loc[insight_data['iid'] == iid]
