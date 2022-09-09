@@ -25,6 +25,7 @@ const state = () => ({
   index2Loc: {},
   selectedDots: [],
   highlightedDots: [],
+  rawStatistics: [],
 
   selectedInsights: []
 })
@@ -68,6 +69,7 @@ const actions = {
 // mutations
 const mutations = {
   updateFullData(state, fullData){
+    console.log('full data', fullData)
     state.data.full = fullData.data
     state.subspaceColumns = fullData.subspace_columns
     state.measureValues= fullData.measure_values
@@ -75,6 +77,7 @@ const mutations = {
     state.insightTypes = fullData.insight_types
     state.breakdownCount = fullData.breakdown_count
     state.simMatrix = fullData.sim_matrix
+    state.rawStatistics = fullData.subspace_raw_count
     state.simMatrix.forEach((scores)=>{
       let scorePackets = Array.from(scores, (e, i)=>[e, i])
       let _scoreObjs = scorePackets.sort((a, b) => b[0]-a[0])

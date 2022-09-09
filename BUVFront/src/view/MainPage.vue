@@ -2,7 +2,7 @@
     <div class="main-page" style="height: 95vh; width: 100%">
         <div style="height:100%; width: 100%; text-align: left">
             <el-row style="height: 100%" class="boundary">
-                <el-col :span="3" style="height: 100%;" >
+                <el-col :span="5" style="height: 100%;" >
                     <el-row>
                         <div class="mini_head">
                             <div class="mini_title">Select data</div>
@@ -53,8 +53,18 @@
                         </el-select>
                         <el-button style="margin-top: 5px" size="mini" @click="submitSubspace">submit subspace</el-button>
                     </el-row>
+                    <el-row>
+                        <div class="mini_head">
+                            <div class="mini_title">Data distribution:</div>
+                        </div>
+                        <RawDataStatistics
+                                class="boundary"
+                                :inputData ="rawStatistics"
+                                style="width: 100%; height: 500px">
+                        </RawDataStatistics>
+                    </el-row>
                 </el-col>
-                <el-col :span="12" style="height: 100%;" class="boundary">
+                <el-col :span="10" style="height: 100%;" class="boundary">
                     <div class="mini_head">
                         <div class="mini_title">Projection View:</div>
                     </div>
@@ -89,10 +99,12 @@ import MainView from "@/components/visualization/MainView";
 import * as d3 from "d3";
 import Information from "@/components/visualization/Information";
 import InsightList from "@/components/visualization/InsightList";
+import RawDataStatistics from "@/components/visualization/RawDataStatistics";
 
 export default {
     name: 'TestPage',
     components: {
+        RawDataStatistics,
         InsightList,
         Information,
         MainView
@@ -133,8 +145,8 @@ export default {
             insightTypes: state => state.insightTypes,
             breakdownCount: state => state.breakdownCount,
             subspaceStatistics: state => state.subspaceStatistics,
-            index2View: state => state.index2View
-
+            index2View: state => state.index2View,
+            rawStatistics: state=>state.rawStatistics
         }),
     },
     methods:{
