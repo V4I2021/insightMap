@@ -46,7 +46,6 @@ export default {
                             grid: grid,
                             xAxis: {
                                 type: "category",
-                                splitNumber: 3,
                                 data: item["breakdown_value"],
                             },
                             yAxis: {
@@ -382,7 +381,7 @@ export default {
 
 
 #chart-text {
-    ont-size: 11px;
+    font-size: 11px;
     font-weight: bold;
     margin: 3px 0 0 3px;
     /*font-size: 20px;*/
