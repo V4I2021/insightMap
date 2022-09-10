@@ -361,7 +361,7 @@ class DataService():
             sentence = '<span style="display:inline;">' \
                        '<span style="color:#f7cd59; display:inline;">{}</span> and ' \
                        '<span style="color:#f7cd59; display:inline;">{}</span> are linear correlated' \
-                       '{}{}{}being grouped by {}.</span>' \
+                       '{}{}{}are grouped by {}.</span>' \
                 .format(measures[0], measures[1],
                         (' when ' if subspace != '' else ' in all data'),
                         ' and '.join(subspace.rsplit(', ', 1)),
@@ -404,7 +404,7 @@ class DataService():
             sentence = '<span style="display:inline;">' \
                        '<span style="color:#f7cd59; display:inline;">{}</span> and ' \
                        '<span style="color:#f7cd59; display:inline;">{}</span> form clusters' \
-                       '{}{}{}being grouped by {}{}{}.</span>' \
+                       '{}{}{}are grouped by {}{}{}.</span>' \
                 .format(measures[0], measures[1],
                         (' when ' if subspace != '' else ' in all data'),
                         ' and '.join(subspace.rsplit(', ', 1)),
