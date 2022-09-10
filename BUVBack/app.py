@@ -74,12 +74,13 @@ def read_data(app_id):
     measure_values = result_df['measure'].unique().tolist()
     breakdown_count = result_df[['breakdown', 'index']].groupby('breakdown').count().reset_index().to_dict('records')
     subspace_statistics = {}
+
     for e in subspace_columns:
         subspace_statistics[e] = list(result_df[e].unique())
 
     record_df['count'] = 1
     lists = []
-    for column in subspace_columns:
+    for column in [c for c in record_df.columns if c not in ['count', 'cid']]:
         r_df = record_df[[column, 'count']].groupby(column).count().reset_index()
         if record_df[column].dtypes == 'object':
             countList = r_df.sort_values('count', ascending=False).values.tolist()

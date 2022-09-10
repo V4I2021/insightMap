@@ -7,7 +7,7 @@
                         <div class="mini_title">Control</div>
                     </div>
                     <!-- Section 1 select data-->
-                    <el-select style="width: 120px; margin-top: 5px; margin-bottom: 5px"
+                    <el-select style="width: 120px;"
                                size="mini" v-model="selectedData"
                                placeholder="Select data">
                         <el-option size="mini"
@@ -21,13 +21,10 @@
                     </el-select>
 
                     <el-button style="margin-left: 5px" size="mini" @click="submit">Confirm</el-button>
-
-                    <el-divider v-if="selectedData" direction="vertical"></el-divider>
+                    <el-divider direction="vertical"></el-divider>
 
                     <!-- Section 2 select breakdown-->
-
-                    <el-select v-if="selectedData"
-                            style="width: 120px;"
+                    <el-select style="width: 120px;"
                                size="mini" v-model="selectBreakdown" multiple
                                placeholder="Select Measure">
                         <el-option size="mini"
@@ -39,14 +36,11 @@
                             <span style="float: right; color: #8492a6; font-size: 2px">{{ item.index }}</span>
                         </el-option>
                     </el-select>
-                    <el-button v-if="selectedData"
-                            size="mini" @click="submitBreakdown" style="margin-top: 0px; margin-left:5px"
-                               :disabled="!breakdownSelected">Confirm</el-button>
-                    <el-divider v-if="selectedData" direction="vertical"></el-divider>
+                    <el-button size="mini" @click="submitBreakdown" style="margin-top: 0px; margin-left:20px">Confirm</el-button>
+                    <el-divider direction="vertical"></el-divider>
 
 
                     <!-- Section 3 select subspace-->
-
                     <el-select
                             style="margin-top: 0px; width: 120px; margin-left: 5px"
                             size="mini" v-for="(subspaceFeature, i) in subspaceStatistics" :key=i
@@ -60,20 +54,68 @@
                         </el-option>
 
                     </el-select>
-                    <el-button v-if="selectedData" style="margin-top: 5px; margin-bottom: 5px; margin-left: 5px" size="mini"
-                               :disabled="!subspaceSelected"
-                               @click="submitSubspace">Confirm subspace</el-button>
+                    <el-button style="margin-top: 5px; margin-bottom: 5px; margin-left: 5px" size="mini" @click="submitSubspace">Confirm subspace</el-button>
                 </div>
 
             </el-row>
-            <el-row style="height: 100%" >
+            <el-row style="height: 100%" class="boundary">
                 <el-col :span="5" style="height: 100%;" >
+                    <el-row>
+                        <div class="mini_head">
+                            <div class="mini_title">Select data</div>
+                        </div>
+                        <el-descriptions size="mini" class="margin-top" :column="1" >
+                            <el-descriptions-item label="Data name">
+                                {{appID}}
+                            </el-descriptions-item>
+                        </el-descriptions>
+                        <el-button size="mini" @click="submit">submit</el-button>
+                    </el-row>
 
+                    <el-row style="margin-top:10px">
+                        <div class="mini_head">
+                            <div class="mini_title">Select breakdown: </div>
+                        </div>
+                        <el-select size="mini" v-model="selectBreakdown" multiple
+                                   style="margin-top: 10px"
+                                   placeholder="Select Measure">
+                            <el-option size="mini"
+                                       v-for="item in breakdownCount"
+                                       :key="item.breakdown"
+                                       :label="item.breakdown"
+                                       :value="item.breakdown">
+                                <span style="float: left">{{ item.breakdown }}</span>
+                                <span style="float: right; color: #8492a6; font-size: 2px">{{ item.index }}</span>
+                            </el-option>
+                        </el-select>
+                        <el-button size="mini" @click="submitBreakdown" style="margin-top: 5px">submit</el-button>
+                    </el-row>
+
+                    <el-row style="margin-top:10px">
+                        <div class="mini_head">
+                            <div class="mini_title">Select subspace:</div>
+                        </div>
+                        <el-select
+                                style="margin-top: 10px"
+                                size="mini" v-for="(subspaceFeature, i) in subspaceStatistics" :key=i
+                                v-model="subspaceFeatureMap[subspaceFeature.feature]" multiple :placeholder="subspaceFeature.feature">
+                            <el-option size="mini"
+                                       v-for="item in subspaceFeature.values"
+                                       :key="item"
+                                       :label="item"
+                                       :value="item">
+                                <span style="float: left">{{ item}}</span>
+                            </el-option>
+
+                        </el-select>
+                        <el-button style="margin-top: 5px" size="mini" @click="submitSubspace">submit subspace</el-button>
+                    </el-row>
                     <el-row>
                         <div class="mini_head">
                             <div class="mini_title">Data distribution:</div>
                         </div>
                         <RawDataStatistics
+                                class="boundary"
                                 :inputData ="rawStatistics"
                                 style="width: 100%; height: 500px">
                         </RawDataStatistics>
@@ -166,22 +208,7 @@ export default {
             index2View: state => state.index2View,
             rawStatistics: state=>state.rawStatistics
         }),
-        subspaceSelected(){
-            let totalLength = d3.sum(Object.values(this.subspaceFeatureMap), l=>l.length)
-            console.log('total length', totalLength)
-            if(totalLength == 0){
-                return false
-            }else{
-                return true
-            }
-        },
-        breakdownSelected(){
-            if(this.selectBreakdown == 0){
-                return false
-            }else{
-                return true
-            }
-        }
+
     },
     methods:{
         submit(){
@@ -286,7 +313,7 @@ export default {
     },
     watch:{
         subspaceStatistics(){
-            console.log('For feature', Object.values(this.subspaceFeatureMap.values()))
+            console.log('For feature', this.subspaceFeatureMap)
             return undefined
             // 为什么不能初始化？
             // newVal.forEach(subspaceFeature=>{
@@ -299,7 +326,8 @@ export default {
                 features.push(d.insight)
             })
             this.symboScale.domain(features)
-        },
+        }
+
     }
 }
 </script>
