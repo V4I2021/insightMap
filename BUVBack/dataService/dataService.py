@@ -272,6 +272,7 @@ class DataService():
                 'insight_name': insight_name,
                 'time_col': time_col,
                 'time_col_value': record[time_col].tolist(),
+                'breakdown_value': breakdown_value,
                 'measure': measure,
                 'measure_value': [y1, y2],
                 'max_min': [max(max(y1), max(y2)), min(min(y1), min(y2))],
@@ -370,6 +371,7 @@ class DataService():
 
             return {
                 'insight_name': insight_name,
+                "measures": measures,
                 'x_value': x_value.tolist(),
                 'y_value': y_value.tolist(),
                 'line_y_value': [reg.predict(x_value[0].reshape(-1, 1))[0][0],
@@ -392,8 +394,8 @@ class DataService():
             labels = db.labels_
 
             noise = ''
+            breakdown_value = record[breakdown].values
             if -1 in labels:
-                breakdown_value = record[breakdown].values
                 cnt = 2
                 for i, label in enumerate(labels):
                     if label == -1 and cnt > 0:
@@ -415,6 +417,8 @@ class DataService():
 
             return {
                 'insight_name': insight_name,
+                "measures": measures,
+                "breakdown_value": breakdown_value.tolist(),
                 'x_value': x_value.tolist(),
                 'y_value': y_value.tolist(),
                 'label': labels.tolist(),
