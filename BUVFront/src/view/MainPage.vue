@@ -29,7 +29,7 @@
                     <el-select v-if="selectedData"
                                style="width: 120px;"
                                size="mini" v-model="selectBreakdown" multiple
-                               placeholder="Select Measure">
+                               placeholder="Select Breakdown">
                         <el-option size="mini"
                                    v-for="item in breakdownCount"
                                    :key="item.breakdown"
@@ -253,7 +253,6 @@ export default {
 
         },
         submitSubspace(){
-
             let hSubspaceMap = {}
             for(let subspaceFeature in this.subspaceFeatureMap){
                 if(this.subspaceFeatureMap[subspaceFeature].length!=0){

@@ -28,12 +28,16 @@ export default {
         this.width = this.$el.clientWidth;
         this.height = this.$el.clientHeight;
         this.init = true
-        this.height = this.unitHeight * this.inputData.length
+        // this.height = this.unitHeight * this.inputData.length
+        // this.height  = 500
     },
     watch:{
         inputData(){
             console.log('inputData', this.inputData)
-        }
+            this.height = this.unitHeight* this.inputData.length
+        },
+
+
     }
 }
 </script>

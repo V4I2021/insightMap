@@ -112,6 +112,9 @@ export default {
                     avgScore: d3.mean(d[1], e=>e.score)
                 }
             })
+            // this.avoidOverlap()
+            this.avoidOverlap()
+            this.avoidOverlap()
             this.avoidOverlap()
             this.avoidOverlap()
             this.renderVoronoi(groupObjs)
@@ -146,7 +149,7 @@ export default {
         },
         avoidOverlap(){
             let locs = this.locs;
-            let r = 6
+            let r = 4
             let nOverlap = 0
             this.init = false
             for(let i = 0, ilen = locs.length; i<ilen; i++){
