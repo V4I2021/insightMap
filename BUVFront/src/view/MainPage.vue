@@ -85,7 +85,7 @@
                     <Information></Information>
                 </el-col>
                 <el-col :span="5"  style="height: 100%;" class="boundary">
-                    <el-row style="width: 100%">
+                    <el-row style="width: 100%;height:270px">
                         <div class="mini_head">
                             <div class="mini_title">Data distribution:</div>
                         </div>
@@ -94,13 +94,12 @@
                                 style="width: 100%;">
                         </RawDataStatistics>
                     </el-row>
-                    <el-row style="width: 100%">
+                    <el-row style="width: 100%;height:calc(100% - 270px)">
                         <div class="mini_head">
                             <div class="mini_title">Insight List:</div>
                         </div>
                         <InsightList style="width: 100%; height:calc(100% - 20px)"></InsightList>
                     </el-row>
-
                 </el-col>
             </el-row>
         </div>
