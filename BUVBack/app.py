@@ -74,6 +74,7 @@ def read_data(app_id):
     measure_values = result_df['measure'].unique().tolist()
     breakdown_count = result_df[['breakdown', 'index']].groupby('breakdown').count().reset_index().to_dict('records')
     subspace_statistics = {}
+
     for e in subspace_columns:
         subspace_statistics[e] = list(result_df[e].unique())
 

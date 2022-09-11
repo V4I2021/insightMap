@@ -63,4 +63,7 @@ export default {
     border-width: 0.5px;
     border-radius: 3px;
 }
+body{
+    margin: 0px
+}
 </style>

@@ -27,18 +27,25 @@ export default {
                 myChart = this.$echarts.init(this.$refs["chart"]);
             }
 
+            const grid = {
+                top: "10px",
+                left: "40px",
+                right: "10px",
+                bottom: "20px"
+            };
+            //{
+            //     top: "30px",
+            //     left: "60px",
+            //     right: "30px",
+            //     bottom: "40px"
+            // };
+
             if (item["insight_name"] === "Top1") {
                 myChart.setOption(
                         {
-                            grid: {
-                                top: "10px",
-                                left: "40px",
-                                right: "10px",
-                                bottom: "20px"
-                            },
+                            grid: grid,
                             xAxis: {
                                 type: "category",
-                                splitNumber: 3,
                                 data: item["breakdown_value"],
                             },
                             yAxis: {
@@ -66,12 +73,7 @@ export default {
             } else if (item["insight_name"] === "Trend") {
                 myChart.setOption(
                         {
-                            grid: {
-                                top: "10px",
-                                left: "40px",
-                                right: "10px",
-                                bottom: "20px"
-                            },
+                            grid: grid,
                             xAxis: {
                                 type: "category",
                                 splitNumber: 3,
@@ -108,12 +110,7 @@ export default {
             } else if (item["insight_name"] === "Correlation") {
                 myChart.setOption(
                         {
-                            grid: {
-                                top: "10px",
-                                left: "40px",
-                                right: "10px",
-                                bottom: "20px"
-                            },
+                            grid: grid,
                             xAxis: {
                                 type: "category",
                                 splitNumber: 3,
@@ -150,12 +147,7 @@ export default {
             } else if (item["insight_name"] === "Outlier" || item["insight_name"] === "Change Point") {
                 myChart.setOption(
                         {
-                            grid: {
-                                top: "10px",
-                                left: "40px",
-                                right: "10px",
-                                bottom: "20px"
-                            },
+                            grid: grid,
                             xAxis: {
                                 type: "category",
                                 splitNumber: 3,
@@ -186,7 +178,7 @@ export default {
                                     },
                                     markPoint: {
                                         symbol: "circle",
-                                        symbolSize: 10,
+                                        symbolSize: 10, // 30
                                         data: [
                                             {
                                                 name: item["insight_name"],
@@ -228,7 +220,7 @@ export default {
                                     emphasis: {
                                         label: {
                                             show: true,
-                                            fontSize: "18",
+                                            fontSize: "18", // 40
                                             fontWeight: "bold"
                                         }
                                     },
@@ -257,12 +249,7 @@ export default {
                             tooltip: {
                                 formatter: "{c}"
                             },
-                            grid: {
-                                top: "10px",
-                                left: "40px",
-                                right: "10px",
-                                bottom: "20px"
-                            },
+                            grid: grid,
                             xAxis: {
                                 min: minX,
                                 max: maxX,
@@ -311,8 +298,7 @@ export default {
             } else if (item["insight_name"] === "Clustering") {
                 const cnt = item["x_value"].length;
                 const minX = item["x_value"][0], maxX = item["x_value"][cnt - 1],
-                        minY = Math.min(item["line_y_value"][0], item["y_value"][0]),
-                        maxY = Math.max(item["line_y_value"][1], item["y_value"][cnt - 1]);
+                        minY = item["y_value"][0], maxY = item["y_value"][cnt - 1];
 
                 let group1 = [], group2 = [];
                 item["x_value"].forEach((val, i) => {
@@ -328,12 +314,7 @@ export default {
                             tooltip: {
                                 formatter: "{c}"
                             },
-                            grid: {
-                                top: "10px",
-                                left: "40px",
-                                right: "10px",
-                                bottom: "20px"
-                            },
+                            grid: grid,
                             xAxis: {
                                 min: minX,
                                 max: maxX,
@@ -403,6 +384,8 @@ export default {
     font-size: 11px;
     font-weight: bold;
     margin: 3px 0 0 3px;
+    /*font-size: 20px;*/
+    /*margin: 10px 0 0 10px;*/
 }
 
 #chart {
