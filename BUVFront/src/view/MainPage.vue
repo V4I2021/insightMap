@@ -27,7 +27,7 @@
                     <!-- Section 2 select breakdown-->
 
                     <el-select v-if="selectedData"
-                            style="width: 120px;"
+                               style="width: 120px;"
                                size="mini" v-model="selectBreakdown" multiple
                                placeholder="Select Measure">
                         <el-option size="mini"
@@ -40,7 +40,7 @@
                         </el-option>
                     </el-select>
                     <el-button v-if="selectedData"
-                            size="mini" @click="submitBreakdown" style="margin-top: 0px; margin-left:5px"
+                               size="mini" @click="submitBreakdown" style="margin-top: 0px; margin-left:5px"
                                :disabled="!breakdownSelected">Confirm</el-button>
                     <el-divider v-if="selectedData" direction="vertical"></el-divider>
 
@@ -67,19 +67,7 @@
 
             </el-row>
             <el-row style="height: 100%" >
-                <el-col :span="5" style="height: 100%;" >
-
-                    <el-row>
-                        <div class="mini_head">
-                            <div class="mini_title">Data distribution:</div>
-                        </div>
-                        <RawDataStatistics
-                                :inputData ="rawStatistics"
-                                style="width: 100%; height: 500px">
-                        </RawDataStatistics>
-                    </el-row>
-                </el-col>
-                <el-col :span="10" style="height: 100%;" class="boundary">
+                <el-col :span="19" style="height: 100%;" class="boundary">
                     <div class="mini_head">
                         <div class="mini_title">Projection View:</div>
                     </div>
@@ -90,17 +78,29 @@
                             :insightTypes="insightTypes"
                     ></main-view>
                 </el-col>
-                <el-col :span="6" style="height: 100%;" class="boundary">
+                <el-col v-if="false" :span="6" style="height: 100%;" class="boundary">
                     <div class="mini_head">
                         <div class="mini_title">Information View:</div>
                     </div>
                     <Information></Information>
                 </el-col>
-                <el-col :span="3"  style="height: 100%;" class="boundary">
-                    <div class="mini_head">
-                        <div class="mini_title">Insight List:</div>
-                    </div>
-                    <InsightList style="width: 100%; height:calc(100% - 20px)"></InsightList>
+                <el-col :span="5"  style="height: 100%;" class="boundary">
+                    <el-row style="width: 100%">
+                        <div class="mini_head">
+                            <div class="mini_title">Data distribution:</div>
+                        </div>
+                        <RawDataStatistics
+                                :inputData ="rawStatistics"
+                                style="width: 100%;">
+                        </RawDataStatistics>
+                    </el-row>
+                    <el-row style="width: 100%">
+                        <div class="mini_head">
+                            <div class="mini_title">Insight List:</div>
+                        </div>
+                        <InsightList style="width: 100%; height:calc(100% - 20px)"></InsightList>
+                    </el-row>
+
                 </el-col>
             </el-row>
         </div>
@@ -286,7 +286,7 @@ export default {
     },
     watch:{
         subspaceStatistics(){
-            console.log('For feature', Object.values(this.subspaceFeatureMap.values()))
+            console.log('For feature', Object.values(this.subspaceFeatureMap))
             return undefined
             // 为什么不能初始化？
             // newVal.forEach(subspaceFeature=>{
