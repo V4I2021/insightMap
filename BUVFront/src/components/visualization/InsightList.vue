@@ -1,5 +1,5 @@
 <template>
-    <div id="insight-list" ref="test" s>
+    <div id="insight-list" ref="test">
       <el-row style="width: 100%" :gutter="20"> </el-row>
         <el-col v-for="insight in selectedInsights" :key="insight.iid" :span="8"
                 class="boundary">

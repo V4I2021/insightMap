@@ -24,7 +24,6 @@ export default {
     }
   },
   mounted(){
-    console.log('data', this.data);
     this.xScale.domain([0, this.data.list.length]).range([0, this.width])
     this.yScale.domain(d3.extent(this.data.list, d=>d[1])).range([3, this.height])
     this.unitWidth = this.width / this.data.list.length

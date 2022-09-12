@@ -6,70 +6,133 @@
                     <div class="mini_head">
                         <div class="mini_title">Control</div>
                     </div>
-                    <div>
+                    <div style="display: inline-block; height: 55px; margin-top: 2px">
                         <!-- Section 1 select data-->
-                        <div>
-                            <el-select style="width: 120px; margin-top: 5px; margin-bottom: 5px"
-                                       size="mini" v-model="selectedData"
-                                       placeholder="Select data">
-                                <el-option size="mini"
-                                           v-for="item in dataNames"
-                                           :key="item"
-                                           :label="item"
-                                           :value="item">
-                                    <span style="float: left">{{item}}</span>
-                                    <span style="float: right; color: #8492a6; font-size: 2px">{{item.index }}</span>
-                                </el-option>
-                            </el-select>
+                        <div style="float:left; height: 100%" >
+                            <div style="float:left">
+                                <el-row style="text-align: center">
+                                    <div class="control_title" style="">Select Data</div>
+                                </el-row>
+                                <el-row style="">
+                                    <el-select style="width: 120px;"
+                                               size="mini" v-model="selectedData"
+                                               placeholder="Select data">
+                                        <el-option size="mini"
+                                                   v-for="item in dataNames"
+                                                   :key="item"
+                                                   :label="item"
+                                                   :value="item">
+                                            <span style="float: left">{{item}}</span>
+                                            <span style="float: right; color: #8492a6; font-size: 2px">{{item.index }}</span>
+                                        </el-option>
+                                    </el-select>
 
-                            <el-button style="margin-left: 5px" size="mini" @click="submit">Confirm</el-button>
+                                    <el-button style="margin-left: 5px" size="mini" @click="submit">Confirm</el-button>
+                                </el-row>
+                            </div>
+                            <el-divider style="float:left; top: 5px" direction="vertical"></el-divider>
                         </div>
-                        <el-divider v-if="selectedData" direction="vertical"></el-divider>
 
-                        <!-- Section 2 select breakdown-->
-                        <div>
-                            <el-select v-if="selectedData"
-                                       style="width: 120px;"
-                                       size="mini" v-model="selectBreakdown" multiple
-                                       placeholder="Select Breakdown">
-                                <el-option size="mini"
-                                           v-for="item in breakdownCount"
-                                           :key="item.breakdown"
-                                           :label="item.breakdown"
-                                           :value="item.breakdown">
-                                    <span style="float: left">{{ item.breakdown }}</span>
-                                    <span style="float: right; color: #8492a6; font-size: 2px">{{ item.index }}</span>
-                                </el-option>
-                            </el-select>
-                            <el-button v-if="selectedData"
-                                       size="mini" @click="submitBreakdown" style="margin-top: 0px; margin-left:5px"
-                                       :disabled="!breakdownSelected">Confirm</el-button>
 
+                        <div style="float:left; height: 100%" >
+                            <!-- Section 2 select breakdown-->
+                            <div style="float:left">
+                                <el-row style="text-align: center">
+                                    <div class="control_title" style="">Select X Dimension</div>
+                                </el-row>
+                                <div style="float:left;">
+                                    <el-select
+                                            style="width: 100px;"
+                                            size="mini" v-model="xDimension" multiple
+                                            placeholder="Select Context">
+                                        <el-option size="mini"
+                                                   v-for="item in dimensions"
+                                                   :key="item"
+                                                   :label="item"
+                                                   :value="item">
+                                            <span style="float: left">{{ item }}</span>
+                                        </el-option>
+                                    </el-select>
+                                    <el-select v-if="true"
+                                               style="width: 150px; margin-left: 5px"
+                                               size="mini" v-model="selectBreakdown" multiple
+                                               :placeholder="'Select ' + xDimension">
+                                        <el-option size="mini"
+                                                   v-for="item in breakdownCount"
+                                                   :key="item.breakdown"
+                                                   :label="item.breakdown"
+                                                   :value="item.breakdown">
+                                            <span style="float: left">{{ item.breakdown }}</span>
+                                            <span style="float: right; color: #8492a6; font-size: 2px">{{ item.index }}</span>
+                                        </el-option>
+                                    </el-select>
+                                    <el-button v-if="true"
+                                               size="mini" @click="submitBreakdown" style="margin-left:5px"
+                                               :disabled="!breakdownSelected">Confirm</el-button>
+
+                                </div>
+                            </div>
+                            <el-divider style="float:left;" direction="vertical"></el-divider>
                         </div>
-                        <el-divider v-if="selectedData" direction="vertical"></el-divider>
-                        <!-- Section 3 select subspace-->
-                        <div>
-                            <el-select
-                                    style="margin-top: 0px; width: 120px; margin-left: 5px"
-                                    size="mini" v-for="(subspaceFeature, i) in subspaceStatistics" :key=i
-                                    v-model="subspaceFeatureMap[subspaceFeature.feature]" multiple :placeholder="subspaceFeature.feature">
-                                <el-option size="mini"
-                                           v-for="item in subspaceFeature.values"
-                                           :key="item"
-                                           :label="item"
-                                           :value="item">
-                                    <span style="float: left">{{ item}}</span>
-                                </el-option>
+                        <div style="float:left; height: 100%" >
+                            <!-- Section 3 select subspace-->
+                            <div style="float:left;">
+                                <div>
+                                    <el-row style="text-align: center">
+                                        <div class="control_title" style="">Select Y Dimension</div>
+                                    </el-row>
+                                    <el-select
+                                            style="width: 100px;"
+                                            size="mini" v-model="yDimension" multiple
+                                            placeholder="Select Context">
+                                        <el-option size="mini"
+                                                   v-for="item in dimensions"
+                                                   :key="item"
+                                                   :label="item"
+                                                   :value="item">
+                                            <span style="float: left">{{ item }}</span>
+                                        </el-option>
+                                    </el-select>
+                                    <el-select
+                                            style="width: 120px; margin-left: 5px"
+                                            size="mini" v-for="(subspaceFeature, i) in subspaceStatistics" :key=i
+                                            v-model="subspaceFeatureMap[subspaceFeature.feature]" multiple :placeholder="subspaceFeature.feature">
+                                        <el-option size="mini"
+                                                   v-for="item in subspaceFeature.values"
+                                                   :key="item"
+                                                   :label="item"
+                                                   :value="item">
+                                            <span style="float: left">{{ item}}</span>
+                                        </el-option>
 
-                            </el-select>
-                            <el-button v-if="selectedData" style="margin-top: 5px; margin-bottom: 5px; margin-left: 5px" size="mini"
-                                       :disabled="!subspaceSelected"
-                                       @click="submitSubspace">Confirm subspace</el-button>
+                                    </el-select>
+                                    <el-button v-if="true" style="margin-left: 5px" size="mini"
+                                               :disabled="!subspaceSelected"
+                                               @click="submitSubspace">Confirm</el-button>
+                                </div>
+                            </div>
+                            <el-divider style="float:left;" direction="vertical"></el-divider>
+                        </div>
+                        <div style="float:left; height: 100%" >
+                            <!-- Section 3 select subspace-->
+                            <div style="float:left;">
+                                <svg :width="5 * 70" height="50">
+                                    <g class="legend">
+                                        <g v-for="(d, i) in insightTypes" :key=i :transform="'translate(' + [10 + (i % 5 ) * 100, parseInt(i/5) * 25+ 15 ] + ')' ">
+                                            <path transform="scale(1.5)"
+                                                  :d="symboScale(d.insight)" fill="none" stroke="grey" stroke-width="1"></path>
+                                            <text x="10" y="4" style="font-size: 11px">
+                                                {{d.insight=="Cross Measure Correlation"?"Correlation":d.insight}}</text>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </div>
+                            <el-divider style="float:left;" direction="vertical"></el-divider>
                         </div>
                     </div>
                 </div>
             </el-row>
-            <el-row style="height: 100%" >
+            <el-row style="height: calc(100% - 50px)" >
                 <el-col :span="16" style="height: 100%;" class="boundary">
                     <div class="mini_head">
                         <div class="mini_title">Projection View:</div>
@@ -79,6 +142,7 @@
                             :allData='data'
                             :symboScale="symboScale"
                             :insightTypes="insightTypes"
+                            :contextConfig="contextConfig"
                     ></main-view>
                 </el-col>
                 <el-col v-if="false" :span="6" style="height: 100%;" class="boundary">
@@ -152,7 +216,22 @@ export default {
             cIndexList: [],
 
             symbos: symbos,
-            symboScale: d3.scaleOrdinal().range(symbos)
+            symboScale: d3.scaleOrdinal().range(symbos),
+
+            dimensions: ['Type', 'Subspace', 'Breakdown'],
+            xDimension: undefined,
+            yDimension: undefined,
+
+            // contextConfig: {
+            //     X:{
+            //         name: 'Breakdown',
+            //         value: undefined
+            //     },
+            //     Y:{
+            //         name: 'Subspace',
+            //         value: undefined
+            //     }
+            // }
         }
     },
     mounted(){
@@ -184,6 +263,27 @@ export default {
                 return false
             }else{
                 return true
+            }
+        },
+        contextConfig(){
+            let subspaceEntries = Object.entries(this.subspaceFeatureMap);
+            let l = Array.from(subspaceEntries, d=>{
+                return {
+                    'name': d[0],
+                    'value': d[1]
+                }})
+            return {
+                Y:{
+                    name: 'Breakdown',
+                    value: [{
+                        'name': 'Breakdown',
+                        'value': this.selectBreakdown
+                    }]
+                },
+                X:{
+                    name: 'Subspace',
+                    value: l
+                }
             }
         }
     },
@@ -316,4 +416,16 @@ export default {
     border-radius: 3px;
 }
 
+.control_title{
+    font-family: 'monospace';
+    height: 20px;
+    font-size: 13px;
+    /*padding-left: 3px;*/
+    /*display: table-cell;*/
+    /*vertical-align: middle;*/
+}
+
+.el-divider--vertical{
+    height: calc(100%);
+}
 </style>

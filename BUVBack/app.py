@@ -163,7 +163,7 @@ def best_clustering(X_embedded, min_cluster=2, max_cluster=50):
             max_score = score
             max_labels = clustering.labels_
             max_n = i
-    print('Max cluster number {}, best cluster number {}'.format(max_cluster, max_n))
+    print('Max cluster number {}, best cluster number {}, embedding size: {}'.format(max_cluster, max_n, X_embedded.shape[0]))
     return max_score, max_n, max_labels
 
 def calc_projection_with_cluster(sim, index_list, app_id, perplexity):
@@ -182,6 +182,7 @@ def return_projection():
     index_list = params['indexList']
     start_time = time.time()
     embedded, labels = calc_projection_with_cluster(None, index_list, app_id, 25)
+
     merge_list = np.concatenate((embedded, labels.reshape(labels.shape[0], 1)), axis=1)
     print('Use time', time.time() - start_time)
     return json.dumps(merge_list.tolist())

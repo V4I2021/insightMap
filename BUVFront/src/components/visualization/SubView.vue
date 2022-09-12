@@ -14,6 +14,14 @@
                  :symboScale="symboScale"
             ></Dot>
         </g>
+        <rect v-if="viewID == 'B' || viewID == 'C' "
+              rx="5" ry="5"
+              :width="box.width" :height="box.height" fill="steelblue" fill-opacity="0.5"></rect>
+        <g class="container">
+            <g class="cc" :transform="textTransform">
+                <text class='label' style="font-size:12px" fill="black">{{label}}</text>
+            </g>
+        </g>
     </g>
 </template>
 
@@ -23,7 +31,7 @@ import Dot from "@/components/visualization/Dot";
 
 export default {
     components: {Dot},
-    props: ['x', 'y', 'width', 'height', 'viewID', 'allData', 'symboScale', 'xScale', 'yScale'],
+    props: ['x', 'y', 'width', 'height', 'viewID', 'allData', 'symboScale', 'xScale', 'yScale', 'contextConfig'],
     name: "SubView",
     data(){
         return {
@@ -33,14 +41,16 @@ export default {
             wholeHeight: this.height,
             boundary: 20,
             init: false,
-            locs: []
+            locs: [],
+            labelSize: 30,
+            label:'',
+            textTransform: "rotate(0)"
+
         }
     },
     mounted(){    },
     computed: {
-        xScaleD1(){
-            return this.xScale.range()[1]
-        },
+
         // xScale(){
         //     return d3.scaleLinear().domain(this.xRange).range([this.boundary, this.wholeWidth-this.boundary])
         // },
@@ -56,6 +66,19 @@ export default {
         updateCount(){
             return this.allData[this.viewID]['count']
         },
+        box(){
+            if(this.width < this.height){
+                return {
+                    width: this.width,
+                    height: this.labelSize
+                }
+            }else{
+                return {
+                    width: this.labelSize,
+                    height: this.height
+                }
+            }
+        },
         // locs(){
         //     let arr = []
         //     arr = Array.from(this.allData[this.viewID].loc, d=>{
@@ -68,9 +91,6 @@ export default {
         width(){
             this.updateLayout()
         },
-        xScaleD1(val){
-            console.log('vvv', val)
-        },
         updateCount(){
             this.updateLayout()
         },
@@ -78,7 +98,31 @@ export default {
             console.log('new loc', this.loc)
         },
         init(){
+        },
+        contextConfig(val){
+            let layer1 = []
+            for(let i = 0, ilen = val.value.length; i < ilen; i++){
+                let label = val.value[i].name + ': ' + val.value[i].value.join(', ')
+                if(val.value[i].value.length == 0) continue
+                layer1.push(label)
+            }
+            let results = layer1.join('; ')
+            this.label = results
 
+            let labelEle = d3.select(this.$el).select('.label').text(this.label);
+            let bBox = labelEle.node().getBBox();
+            console.log(' this.viewID, ', this.viewID, this.width, this.height)
+            if(this.width < this.height){
+                this.textTransform = 'rotate(0)'
+                let x = (this.width - bBox.width) / 2;
+                let y = (this.labelSize + bBox.height) / 2 - 2;
+                labelEle.attr('x', x).attr('y', y)
+            }else{
+                this.textTransform = 'rotate(-90)'
+                let container = d3.select(this.$el).select('.container')
+                container.attr('transform', 'translate(' + [20, (bBox.width + this.height) / 2] + ')')
+                console.log('bBox ', this.viewID, bBox)
+            }
         }
     },
 
@@ -115,8 +159,7 @@ export default {
             // this.avoidOverlap()
             this.avoidOverlap()
             this.avoidOverlap()
-            this.avoidOverlap()
-            this.avoidOverlap()
+
             this.renderVoronoi(groupObjs)
         },
         renderVoronoi(particles){
@@ -140,9 +183,6 @@ export default {
         disf(a, b){
             return Math.sqrt((a.cx - b.cx)**2 + (a.cy - b.cy)**2)
         },
-        // disf(a, b){
-        //     return Math.sqrt((this.xScale(a.x) - this.xScale(b.x))**2 + (this.yScale(a.y) - this.yScale(b.y))**2)
-        // },
         click(){
             console.log('click')
             this.avoidOverlap()

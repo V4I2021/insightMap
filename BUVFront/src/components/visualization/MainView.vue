@@ -1,7 +1,7 @@
 <template>
     <svg>
         <g v-if="init">
-            <g class="legend">
+            <g class="legend" v-if="false">
                 <g v-for="(d, i) in insightTypes" :key=i :transform="'translate(' + [15, 10 + i * 25] + ')' ">
                     <path :d="symboScale(d.insight)" fill="none" stroke="grey" stroke-width="1"></path>
                     <text x="20" y="5" style="font-size: 10px">{{ d.insight}}</text>
@@ -26,6 +26,7 @@
                     :symboScale="symboScale"
                     :xScale="scaleConfig.B.xScale"
                     :yScale="scaleConfig.B.yScale"
+                    :contextConfig="contextConfig.X"
             ></sub-view>
             <sub-view
                     class="C"
@@ -36,6 +37,7 @@
                     :symboScale="symboScale"
                     :xScale="scaleConfig.C.xScale"
                     :yScale="scaleConfig.C.yScale"
+                    :contextConfig="contextConfig.Y"
             ></sub-view>
             <sub-view
                     class="D"
@@ -84,7 +86,7 @@ let curveGenerator = d3.line()
 export default {
     name: "MainView",
     components: {ControlGlyph, SubView},
-    props:['records', 'allData', 'symboScale', 'insightTypes'],
+    props:['records', 'allData', 'symboScale', 'insightTypes', 'contextConfig'],
     data(){
         return {
             width: 0,  height: 0,
