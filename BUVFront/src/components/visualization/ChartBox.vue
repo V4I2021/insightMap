@@ -17,7 +17,7 @@ export default {
     },
     methods: {
         drawChart() {
-            // todo: 坐标轴名，sentence
+            // todo: sentence
             const numberFormatter = d3.format("~s");
             // const longNameFormatter = this.longNameFormatter;
             const item = this.insight;
@@ -27,28 +27,57 @@ export default {
                 myChart = this.$echarts.init(this.$refs["chart"]);
             }
 
-            const grid = {
-                top: "10px",
-                left: "40px",
-                right: "10px",
-                bottom: "20px"
-            };
-            //{
+            const grid =
+                    {
+                        top: "30px",
+                        left: "40px",
+                        right: "10px",
+                        bottom: "35px"
+                    };
+            // {
             //     top: "30px",
-            //     left: "60px",
+            //     left: "70px",
             //     right: "30px",
-            //     bottom: "40px"
+            //     bottom: "60px"
             // };
+
+            const xAxisConfig = {
+                nameLocation: "center",
+                nameTextStyle: {
+                    padding: [5, 0, 0, 0],
+                    fontSize: 11,
+                    // padding: [15, 0, 0, 0],
+                    // fontSize: 17,
+                }
+            };
+
+            const yAxisConfig = {
+                nameLocation: "end",
+                nameTextStyle: {
+                    rotate: "90",
+                    padding: [0, 0, -5, 0],
+                    fontSize: 11,
+                },
+                // nameLocation: "center",
+                // nameTextStyle: {
+                //     padding: [0, 0, 25, 0],
+                //     fontSize: 17,
+                // },
+            };
 
             if (item["insight_name"] === "Top1") {
                 myChart.setOption(
                         {
                             grid: grid,
                             xAxis: {
+                                name: item["breakdown"],
+                                ...xAxisConfig,
                                 type: "category",
                                 data: item["breakdown_value"],
                             },
                             yAxis: {
+                                name: item["measure"],
+                                ...yAxisConfig,
                                 type: "value",
                                 splitNumber: 5,
                                 axisLabel: {
@@ -75,13 +104,18 @@ export default {
                         {
                             grid: grid,
                             xAxis: {
+                                name: item["breakdown"],
+                                ...xAxisConfig,
                                 type: "category",
-                                splitNumber: 3,
-                                data: item["breakdown_value"]
+                                data: item["breakdown_value"],
+                                axisLabel: {
+                                    interval: 9,
+                                }
                             },
                             yAxis: {
+                                name: item["measure"],
+                                ...yAxisConfig,
                                 type: "value",
-                                splitNumber: 5,
                                 axisLabel: {
                                     formatter: function (value) {
                                         return numberFormatter(value);
@@ -111,12 +145,23 @@ export default {
                 myChart.setOption(
                         {
                             grid: grid,
-                            xAxis: {
-                                type: "category",
-                                splitNumber: 3,
+                            legend: {
+                                right: "10", // "20",
                                 data: item["breakdown_value"]
                             },
+                            xAxis: {
+                                name: item["time_col"],
+                                ...xAxisConfig,
+                                type: "category",
+                                splitNumber: 3,
+                                data: item["time_col_value"],
+                                axisLabel: {
+                                    interval: 9,
+                                }
+                            },
                             yAxis: {
+                                name: item["measure"],
+                                ...yAxisConfig,
                                 type: "value",
                                 splitNumber: 5,
                                 axisLabel: {
@@ -127,14 +172,14 @@ export default {
                             },
                             series: [
                                 {
-                                    name: "1", // todo
+                                    name: item["breakdown_value"][0],
                                     data: item["measure_value"][0],
                                     type: "line",
                                     smooth: true,
                                     showSymbol: false,
                                 },
                                 {
-                                    name: "2", // todo
+                                    name: item["breakdown_value"][1],
                                     data: item["measure_value"][1],
                                     type: "line",
                                     smooth: true,
@@ -149,11 +194,17 @@ export default {
                         {
                             grid: grid,
                             xAxis: {
+                                name: item["breakdown"],
+                                ...xAxisConfig,
                                 type: "category",
-                                splitNumber: 3,
-                                data: item["breakdown_value"]
+                                data: item["breakdown_value"],
+                                axisLabel: {
+                                    interval: 9,
+                                }
                             },
                             yAxis: {
+                                name: item["measure"],
+                                ...yAxisConfig,
                                 type: "value",
                                 splitNumber: 5,
                                 axisLabel: {
@@ -185,7 +236,7 @@ export default {
                                                 xAxis: item["x"],
                                                 yAxis: item["y"],
                                                 itemStyle: {
-                                                    color: "#96ce7b",
+                                                    color: "#ee6666",
                                                 }
                                             }
                                         ]
@@ -236,7 +287,6 @@ export default {
             } else if (item["insight_name"] === "Cross Measure Correlation") {
                 const cnt = item["x_value"].length;
                 const minX = item["x_value"][0], maxX = item["x_value"][cnt - 1],
-                        minY = Math.min(item["line_y_value"][0], item["y_value"][0]),
                         maxY = Math.max(item["line_y_value"][1], item["y_value"][cnt - 1]);
 
                 let data = [];
@@ -251,8 +301,8 @@ export default {
                             },
                             grid: grid,
                             xAxis: {
-                                min: minX,
-                                max: maxX,
+                                name: item["measures"][0],
+                                ...xAxisConfig,
                                 splitNumber: 3,
                                 axisLabel: {
                                     formatter: function (value) {
@@ -261,7 +311,8 @@ export default {
                                 },
                             },
                             yAxis: {
-                                min: minY,
+                                name: item["measures"][1],
+                                ...yAxisConfig,
                                 max: maxY,
                                 splitNumber: 5,
                                 axisLabel: {
@@ -296,16 +347,39 @@ export default {
                         true
                 );
             } else if (item["insight_name"] === "Clustering") {
-                const cnt = item["x_value"].length;
-                const minX = item["x_value"][0], maxX = item["x_value"][cnt - 1],
-                        minY = item["y_value"][0], maxY = item["y_value"][cnt - 1];
+                let groups = {};
 
-                let group1 = [], group2 = [];
                 item["x_value"].forEach((val, i) => {
-                    if (item["label"][i] === 0) {
-                        group1.push([val, item["y_value"][i]]);
+                    const label = item["label"][i];
+                    if (!(label in groups)) {
+                        groups[label] = [];
+                    }
+                    groups[label].push([val, item["y_value"][i]]);
+                });
+
+                let series = [];
+                Object.keys(groups).forEach((key, i) => {
+                    const config = {
+                        data: groups[key],
+                        type: "scatter",
+                        emphasis: {
+                            focus: "series"
+                        },
+                    };
+
+                    if (key === "-1") {
+                        series.push({
+                            name: "noise",
+                            itemStyle: {
+                                color: "grey"
+                            },
+                            ...config,
+                        });
                     } else {
-                        group2.push([val, item["y_value"][i]]);
+                        series.push({
+                            name: `group${i}`,
+                            ...config
+                        });
                     }
                 });
 
@@ -314,10 +388,14 @@ export default {
                             tooltip: {
                                 formatter: "{c}"
                             },
+                            legend: {
+                                right: "10", // "20",
+                                data: ["noise"]
+                            },
                             grid: grid,
                             xAxis: {
-                                min: minX,
-                                max: maxX,
+                                name: item["measures"][0],
+                                ...xAxisConfig,
                                 splitNumber: 3,
                                 axisLabel: {
                                     formatter: function (value) {
@@ -326,8 +404,8 @@ export default {
                                 },
                             },
                             yAxis: {
-                                min: minY,
-                                max: maxY,
+                                name: item["measures"][1],
+                                ...yAxisConfig,
                                 splitNumber: 5,
                                 axisLabel: {
                                     formatter: function (value) {
@@ -335,24 +413,7 @@ export default {
                                     }
                                 },
                             },
-                            series: [
-                                {
-                                    name: "1", // todo
-                                    data: group1,
-                                    type: "scatter",
-                                    emphasis: {
-                                        focus: "series"
-                                    },
-                                },
-                                {
-                                    name: "2", // todo
-                                    data: group2,
-                                    type: "scatter",
-                                    emphasis: {
-                                        focus: "series"
-                                    },
-                                }
-                            ]
+                            series: series
                         },
                         true
                 );
@@ -379,10 +440,9 @@ export default {
     flex-direction: column;
 }
 
-
 #chart-text {
-    font-size: 11px;
     font-weight: bold;
+    font-size: 11px;
     margin: 3px 0 0 3px;
     /*font-size: 20px;*/
     /*margin: 10px 0 0 10px;*/
@@ -391,9 +451,4 @@ export default {
 #chart {
     flex: auto;
 }
-
-/*.chart-box-hover {*/
-/*    box-shadow: 7px 7px 7px #afafaf;*/
-/*    transition: all;*/
-/*}*/
 </style>

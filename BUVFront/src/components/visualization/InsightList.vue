@@ -1,9 +1,11 @@
 <template>
-    <div id="insight-list" ref="test">
-        <div v-for="insight in selectedInsights" :key="insight.iid">
-            <chart-box class="insight boundary"
+    <div id="insight-list" ref="test" s>
+      <el-row style="width: 100%" :gutter="20"> </el-row>
+        <el-col v-for="insight in selectedInsights" :key="insight.iid" :span="8"
+                class="boundary">
+          <chart-box class="insight boundary"
                        :insight="insight" :ref="`chartbox${insight.iid}`"/>
-        </div>
+        </el-col>
     </div>
 </template>
 
@@ -15,9 +17,12 @@ export default {
     name: "InsightList",
     components: {ChartBox},
     data() {
-        return {};
+        return {
+          unitWidth: 0,
+        };
     },
     mounted() {
+      this.unitWidth = this.$el.clientWidth / 3;
     },
     computed: {
         ...mapState("test", {
@@ -40,8 +45,8 @@ export default {
 <style scoped>
 
 #insight-list {
-    overflow-x: hidden;
-    overflow-y: scroll;
+    /*overflow-x: scroll;*/
+    /*overflow-y: scroll;*/
 }
 
 .insight {
